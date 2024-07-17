@@ -8,9 +8,8 @@ public with sharing class MixService
             WHERE Mix__c IN :mixIds
             GROUP BY Song__r.Genre__c, Mix__c];
 
-        //Create a map with mix_c as key and a map of genre(key) and count(value) as value
         Map<Id, Map<String, Integer>> mixGenreCount = new Map<Id, Map<String, Integer>>();
-        //iterate over the map and update mixes with 2 most popular genres
+
         for (AggregateResult r : res)
         {
             Id mixId = (Id)r.get('mix');
@@ -24,7 +23,7 @@ public with sharing class MixService
             }
 
             Map<String, Integer> genreCount = mixGenreCount.get(mixId);
-            //will never contain duplicate genres
+
             genreCount.put(genre, count);
         }
 
@@ -43,14 +42,13 @@ public with sharing class MixService
 
             genres.sort();
 
-            //need to check behavior when there is only one genre or none
             mix.Primary_Genre__c = genres[0];
             mix.Secondary_Genre__c = genres.size() > 1 ? genres[1] : null;
             
 
             mixesToUpdate.add(mix);
         }
-
-        System.debug('mixesToUpdate: ' + mixesToUpdate);
+        
+        update mixesToUpdate;
     }
 }
