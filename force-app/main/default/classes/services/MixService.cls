@@ -2,7 +2,7 @@ public with sharing class MixService
 {
     public static void updateMixFields(Set<Id> mixIds)
     {
-        Map<Id, Map<String, Integer>> mixGenreCount = getMixGenreCount();
+        Map<Id, Map<String, Integer>> mixGenreCount = getMixGenreCount(mixIds);
 
 
         List<Mix__c> mixesToUpdate = new List<Mix__c>();
@@ -29,13 +29,14 @@ public with sharing class MixService
         update mixesToUpdate;
     }
 
-    private static Map<Id, Map<String, Integer>> getMixGenreCount()
+    private static Map<Id, Map<String, Integer>> getMixGenreCount(Set<Id> mixIds)
     {
         List<AggregateResult> res = [
             SELECT COUNT(Id) recordCount, Song__r.Genre__c genre, Mix__c mix
             FROM Track__c
             WHERE Mix__c IN :mixIds
             GROUP BY Song__r.Genre__c, Mix__c];
+
 
         Map<Id, Map<String, Integer>> mixGenreCount = new Map<Id, Map<String, Integer>>();
 
@@ -55,5 +56,7 @@ public with sharing class MixService
 
             genreCount.put(genre, count);
         }
+
+        return mixGenreCount;
     }
 }
