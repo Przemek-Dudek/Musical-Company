@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TrackCountNeverExceedsTrackLicenses</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(Track_Count__c)),
+  NOT(ISBLANK(Track_Licenses__c)),
+  Track_Count__c &gt; Track_Licenses__c
+)</errorConditionFormula>
+    <errorMessage>Track Count cannot exceed the number of Track Licenses</errorMessage>
+</ValidationRule>
