@@ -23,4 +23,24 @@ public with sharing class TrackService
             }
         }
     }
+
+    public static Set<Id> getMixIdsFromTracks(Set<Id> trackIds)
+    {
+        List<Track__c> tracks = [
+            SELECT Mix__c
+            FROM Track__c
+            WHERE Id IN :trackIds];
+
+        Set<Id> mixIds = new Set<Id>();
+
+        for (Track__c track : tracks)
+        {
+            if(track.Mix__c != null)
+            {
+                mixIds.add(track.Mix__c);
+            }
+        }
+
+        return mixIds;
+    }
 }

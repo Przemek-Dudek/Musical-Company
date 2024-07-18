@@ -12,7 +12,7 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
 
     protected override void onAfterInsert()
     {
-        handleMixUpdates(null, (Map<Id, Track__c>)Trigger.newMap);
+        handleMixUpdates((Map<Id, Track__c>)Trigger.newMap);
     }
 
     protected override void onAfterUpdate()
@@ -22,13 +22,14 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
 
     protected override void onAfterDelete()
     {
-        
+        handleMixUpdates((Map<Id, Track__c>)Trigger.oldMap);
     }
 
     protected override void onAfterUnDelete()
     {
         checkIfMaxTrackAmountPerMixWasHit();
-        handleMixUpdates(null, (Map<Id, Track__c>)Trigger.newMap);
+
+        handleMixUpdates((Map<Id, Track__c>)Trigger.newMap);
     }
 
     private void checkIfMaxTrackAmountPerMixWasHit()
@@ -42,12 +43,6 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
         
         for (Track__c newTrack : newMap.values())
         {
-            if (oldMap == null)
-            {
-                updatedMixIds.add(newTrack.Mix__c);
-                continue;
-            }
-
             Track__c oldTrack = oldMap.get(newTrack.Id);
 
             if (newTrack.Mix__c != oldTrack.Mix__c)
@@ -72,8 +67,18 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
             }
         }
 
-        System.debug('updatedMixIds: ' + updatedMixIds);
-
         MixService.updateMixFields(updatedMixIds);
+    }
+
+    private void handleMixUpdates(Map<Id, Track__c> trackMap)
+    {
+        Set<Id> mixIds = new Set<Id>();
+
+        for (Track__c track : trackMap.values())
+        {
+            mixIds.add(track.Mix__c);
+        }
+
+        MixService.updateMixFields(mixIds);
     }
 }
