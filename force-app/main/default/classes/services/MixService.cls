@@ -13,13 +13,24 @@ public with sharing class MixService
             
             Map<String, Integer> genreCount = mixGenreCount.get(mixId);
 
-            List<String> genres = new List<String>();
-            genres.addAll(genreCount.keySet());
+            String primaryGenre = null;
+            String secondaryGenre = null;
 
-            genres.sort();
+            for(String genre : genreCount.keySet())
+            {
+                if(primaryGenre == null || genreCount.get(genre) > genreCount.get(primaryGenre))
+                {
+                    secondaryGenre = primaryGenre;
+                    primaryGenre = genre;
+                }
+                else if(secondaryGenre == null || genreCount.get(genre) > genreCount.get(secondaryGenre))
+                {
+                    secondaryGenre = genre;
+                }
+            }
 
-            mix.Primary_Genre__c = genres[0];
-            mix.Secondary_Genre__c = genres.size() > 1 ? genres[1] : null;
+            mix.Primary_Genre__c = primaryGenre;
+            mix.Secondary_Genre__c = secondaryGenre;
             
 
             mixesToUpdate.add(mix);

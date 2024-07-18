@@ -27,4 +27,12 @@ public with sharing class TrackSelector
             HAVING COUNT(Id) > :Consts.MAX_TRACKS_PER_MIX
             AND Mix__c IN :mixIds];
     }
+
+    public static List<Track__c> getTracksBySongIds(Set<Id> songIds)
+    {
+        return [
+            SELECT Id, Song__c
+            FROM Track__c
+            WHERE Song__c IN :songIds];
+    }
 }

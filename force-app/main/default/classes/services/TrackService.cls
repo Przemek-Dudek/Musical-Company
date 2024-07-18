@@ -44,11 +44,11 @@ public with sharing class TrackService
         return mixIds;
     }
 
-    public static Set<Id> getTrackIdsFromSongs(Set<Id> songs)
+    public static Set<Id> getTrackIdsFromSongs(Set<Id> songIds)
     {
         Set<Id> trackIds = new Set<Id>();
 
-        List<Track__c> tracks = [SELECT Id FROM Track__c WHERE Id IN :songs];
+        List<Track__c> tracks = [SELECT Id FROM Track__c WHERE Song__c IN :songIds];
 
         for (Track__c track : tracks)
         {
