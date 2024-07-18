@@ -1,5 +1,6 @@
-# To deploy sample data
+# Musical Company
+
+## To deploy sample data use:
 ```bash
 sf data import tree -p data/plan.json
 ```
-
