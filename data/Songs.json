@@ -3,8 +3,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef1"
+                "referenceId": "songRefId1"
             },
+            "Name": "Blinding Lights",
             "Artist__c": "The Weeknd",
             "Length__c": 3.57,
             "Genre__c": "Pop",
@@ -14,8 +15,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef2"
+                "referenceId": "songRefId2"
             },
+            "Name": "God's Plan",
             "Artist__c": "Drake",
             "Length__c": 3.06,
             "Genre__c": "Hip Hop",
@@ -25,8 +27,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef3"
+                "referenceId": "songRefId3"
             },
+            "Name": "Bohemian Rhapsody",
             "Artist__c": "Queen",
             "Length__c": 5.90,
             "Genre__c": "Rock",
@@ -36,8 +39,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef4"
+                "referenceId": "songRefId4"
             },
+            "Name": "Halo",
             "Artist__c": "Beyoncé",
             "Length__c": 3.31,
             "Genre__c": "Rhythm and Blues",
@@ -47,8 +51,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef5"
+                "referenceId": "songRefId5"
             },
+            "Name": "One Love",
             "Artist__c": "Bob Marley",
             "Length__c": 4.62,
             "Genre__c": "Reggae",
@@ -58,8 +63,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef6"
+                "referenceId": "songRefId6"
             },
+            "Name": "Love Story",
             "Artist__c": "Taylor Swift",
             "Length__c": 4.09,
             "Genre__c": "Country",
@@ -69,8 +75,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef7"
+                "referenceId": "songRefId7"
             },
+            "Name": "Blowin' in the Wind",
             "Artist__c": "Bob Dylan",
             "Length__c": 3.05,
             "Genre__c": "Folk",
@@ -80,8 +87,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef8"
+                "referenceId": "songRefId8"
             },
+            "Name": "I Got You (I Feel Good)",
             "Artist__c": "James Brown",
             "Length__c": 3.49,
             "Genre__c": "Funk",
@@ -91,8 +99,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef9"
+                "referenceId": "songRefId9"
             },
+            "Name": "Enta Omri",
             "Artist__c": "Oum Kalthoum",
             "Length__c": 6.58,
             "Genre__c": "Middle Eastern",
@@ -102,8 +111,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef10"
+                "referenceId": "songRefId10"
             },
+            "Name": "So What",
             "Artist__c": "Miles Davis",
             "Length__c": 5.23,
             "Genre__c": "Jazz",
@@ -113,8 +123,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef11"
+                "referenceId": "songRefId11"
             },
+            "Name": "Stayin' Alive",
             "Artist__c": "Bee Gees",
             "Length__c": 3.79,
             "Genre__c": "Disco",
@@ -124,8 +135,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef12"
+                "referenceId": "songRefId12"
             },
+            "Name": "Symphony No. 9",
             "Artist__c": "Ludwig van Beethoven",
             "Length__c": 7.98,
             "Genre__c": "Classical",
@@ -135,8 +147,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef13"
+                "referenceId": "songRefId13"
             },
+            "Name": "One More Time",
             "Artist__c": "Daft Punk",
             "Length__c": 4.83,
             "Genre__c": "Electronic",
@@ -146,8 +159,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef14"
+                "referenceId": "songRefId14"
             },
+            "Name": "Hips Don't Lie",
             "Artist__c": "Shakira",
             "Length__c": 3.91,
             "Genre__c": "Music of Latin America",
@@ -157,8 +171,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef15"
+                "referenceId": "songRefId15"
             },
+            "Name": "Water No Get Enemy",
             "Artist__c": "Fela Kuti",
             "Length__c": 5.21,
             "Genre__c": "Music of Africa",
@@ -168,8 +183,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef16"
+                "referenceId": "songRefId16"
             },
+            "Name": "Dynamite",
             "Artist__c": "BTS",
             "Length__c": 3.59,
             "Genre__c": "Music of Asia",
@@ -179,8 +195,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef17"
+                "referenceId": "songRefId17"
             },
+            "Name": "Mannish Boy",
             "Artist__c": "Muddy Waters",
             "Length__c": 3.31,
             "Genre__c": "Traditional Music",
@@ -190,8 +207,9 @@
         {
             "attributes": {
                 "type": "Song__c",
-                "referenceId": "sngRef18"
+                "referenceId": "songRefId18"
             },
+            "Name": "Do I Wanna Know?",
             "Artist__c": "Arctic Monkeys",
             "Length__c": 3.42,
             "Genre__c": "Independent Music",
