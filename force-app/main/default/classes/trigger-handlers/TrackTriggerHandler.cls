@@ -13,16 +13,22 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
     protected override void onAfterInsert()
     {
         handleMixUpdates((Map<Id, Track__c>)Trigger.newMap);
+
+        handleTrackCount((Map<Id, Track__c>)Trigger.newMap);
     }
 
     protected override void onAfterUpdate()
     {
         handleMixUpdates((Map<Id, Track__c>)Trigger.oldMap, (Map<Id, Track__c>)Trigger.newMap);
+
+        handleTrackCount((Map<Id, Track__c>)Trigger.oldMap, (Map<Id, Track__c>)Trigger.newMap);
     }
 
     protected override void onAfterDelete()
     {
         handleMixUpdates((Map<Id, Track__c>)Trigger.oldMap);
+
+        handleTrackCount((Map<Id, Track__c>)Trigger.oldMap);
     }
 
     protected override void onAfterUnDelete()
@@ -30,6 +36,8 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
         checkIfMaxTrackAmountPerMixWasHit();
 
         handleMixUpdates((Map<Id, Track__c>)Trigger.newMap);
+
+        handleTrackCount((Map<Id, Track__c>)Trigger.newMap);
     }
 
     private void checkIfMaxTrackAmountPerMixWasHit()
@@ -80,5 +88,45 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
         }
 
         MixService.updateMixFields(mixIds);
+    }
+
+    private void handleTrackCount(Map<Id, Track__c> trackMap)
+    {
+        Set<Id> songIds = new Set<Id>();
+
+        for (Track__c track : trackMap.values())
+        {
+            if (track.Song__c != null)
+            {
+                songIds.add(track.Song__c);
+            }
+        }
+
+        SongService.updateSongFields(songIds);
+    }
+
+    private void handleTrackCount(Map<Id, Track__c> oldMap, Map<Id, Track__c> newMap)
+    {
+        Set<Id> songIds = new Set<Id>();
+
+        for (Track__c newTrack : newMap.values())
+        {
+            Track__c oldTrack = oldMap.get(newTrack.Id);
+
+            if (newTrack.Song__c != oldTrack.Song__c)
+            {
+                if (newTrack.Song__c != null)
+                {
+                    songIds.add(newTrack.Song__c);
+                }
+
+                if (oldTrack.Song__c != null)
+                {
+                    songIds.add(oldTrack.Song__c);
+                }
+            }
+        }
+
+        SongService.updateSongFields(songIds);
     }
 }

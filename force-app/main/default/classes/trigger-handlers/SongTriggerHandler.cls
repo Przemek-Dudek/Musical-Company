@@ -7,7 +7,7 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
 
     private void handleGenreChange(Map<Id, Song__c> oldMap, Map<Id, Song__c> newMap)
     {
-        Set<Id> trackAffectedIds = new Set<Id>();
+        Set<Id> songsWithChangedGenreIds = new Set<Id>();
 
         for (Song__c newSong : newMap.values())
         {
@@ -15,15 +15,17 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
 
             if (newSong.Genre__c != oldSong.Genre__c)
             {
-                trackAffectedIds.add(newSong.Id);
+                songsWithChangedGenreIds.add(newSong.Id);
             }
         }
 
-        if (trackAffectedIds.isEmpty())
+        if (songsWithChangedGenreIds.isEmpty())
         {
             return;
         }
 
-        MixService.updateMixFields(TrackService.getMixIdsFromTracks(trackAffectedIds));
+        Set<Id> trackIds = TrackService.getTrackIdsFromSongs(songsWithChangedGenreIds);
+
+        MixService.updateMixFields(trackIds);
     }
 }

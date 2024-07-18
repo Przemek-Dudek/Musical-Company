@@ -8,7 +8,7 @@ public with sharing class TrackService
             mixIds.add(track.Mix__c);
         }
 
-        Set<Id> fullMixesIds = MixSelector.selectFullMixIds(mixIds);
+        Set<Id> fullMixesIds = MixService.getFullMixIds(mixIds);
 
         if (fullMixesIds.isEmpty())
         {
@@ -42,5 +42,19 @@ public with sharing class TrackService
         }
 
         return mixIds;
+    }
+
+    public static Set<Id> getTrackIdsFromSongs(Set<Id> songs)
+    {
+        Set<Id> trackIds = new Set<Id>();
+
+        List<Track__c> tracks = [SELECT Id FROM Track__c WHERE Id IN :songs];
+
+        for (Track__c track : tracks)
+        {
+            trackIds.add(track.Id);
+        }
+
+        return trackIds;
     }
 }
