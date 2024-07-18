@@ -5,6 +5,11 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
         handleGenreChange((Map<Id, Song__c>)Trigger.oldMap, (Map<Id, Song__c>)Trigger.newMap);
     }
 
+    protected override void onAfterDelete()
+    {
+        handleSongRemoval();
+    }
+
     private void handleGenreChange(Map<Id, Song__c> oldMap, Map<Id, Song__c> newMap)
     {
         Set<Id> songsWithChangedGenreIds = new Set<Id>();
@@ -25,6 +30,20 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
         }
 
         Set<Id> trackIds = TrackService.getTrackIdsFromSongs(songsWithChangedGenreIds);
+
+        MixService.updateMixFields(TrackService.getMixIdsFromTracks(trackIds));
+    }
+
+    private void handleSongRemoval()
+    {
+        Set<Id> songIds = new Set<Id>();
+
+        for (Song__c song : (List<Song__c>)Trigger.old)
+        {
+            songIds.add(song.Id);
+        }
+
+        Set<Id> trackIds = TrackService.getTrackIdsFromSongs(songIds);
 
         MixService.updateMixFields(trackIds);
     }
