@@ -16,16 +16,4 @@ public with sharing class SongService
 
         update songsToUpdate;
     }
-
-    public static void clearRelatedTracks(Set<Id> songIds)
-    {
-        List<Track__c> tracks = TrackSelector.getTracksBySongIds(songIds);
-
-        for (Track__c track : tracks)
-        {
-            track.Song__c = null;
-        }
-
-        update tracks;
-    }
 }

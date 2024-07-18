@@ -1,5 +1,7 @@
 public with sharing class SongTriggerHandler extends TriggerHandlerBase
 {
+    private static Set<Id> mixesToUpdate = new Set<Id>();
+
     protected override void onAfterUpdate()
     {
         handleGenreChange((Map<Id, Song__c>)Trigger.oldMap, (Map<Id, Song__c>)Trigger.newMap);
@@ -7,7 +9,29 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
 
     protected override void onBeforeDelete()
     {
-        handleSongRemoval();
+        addMixesToUpdate();
+    }
+
+    protected override void onAfterDelete()
+    {
+        updateMixes();
+    }
+
+    protected override void onAfterUndelete()
+    {
+        Set<Id> affectedMixes = getAffectedMixes((List<Song__c>)Trigger.new);
+
+        MixService.updateMixFields(affectedMixes);
+    }
+
+    private void addMixesToUpdate()
+    {
+        mixesToUpdate.addAll(getAffectedMixes((List<Song__c>)Trigger.old));
+    }
+
+    private void updateMixes()
+    {
+        MixService.updateMixFields(mixesToUpdate);
     }
 
     private void handleGenreChange(Map<Id, Song__c> oldMap, Map<Id, Song__c> newMap)
@@ -34,15 +58,15 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
         MixService.updateMixFields(TrackService.getMixIdsFromTracks(trackIds));
     }
 
-    private void handleSongRemoval()
+    private static Set<Id> getAffectedMixes(List<Song__c> songs)
     {
         Set<Id> songIds = new Set<Id>();
 
-        for (Song__c song : (List<Song__c>)Trigger.old)
+        for (Song__c song : songs)
         {
             songIds.add(song.Id);
         }
 
-        SongService.clearRelatedTracks(songIds);
+        return TrackService.getMixIdsFromTracks(TrackService.getTrackIdsFromSongs(songIds));
     }
 }
