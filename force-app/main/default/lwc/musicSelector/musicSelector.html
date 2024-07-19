@@ -1,15 +1,16 @@
 <template>
-    <div class="slds-grid slds-wrap slds-gutters">
-        <div class="slds-col slds-size_2-of-3 slds-var-p-around_small">
+    <div class="slds-grid slds-wrap slds-gutters slds-var-p-horizontal_x-large">
+        <div class="slds-col slds-var-p-around_small slds-size_1-of-1">
             <lightning-record-picker
                 value={musicRecordId}
                 label="Song"
                 placeholder="Select song to add"
                 object-api-name="Song__c"
                 onchange={handleSelect}
+                class="slds-col_bump-left"
             ></lightning-record-picker>
         </div>
-        <div class="slds-col slds-size_1-of-3 slds-var-p-around_small slds-align-bottom">
+        <div class="slds-col slds-var-p-around_small slds-align-bottom slds-text-align_right">
             <lightning-button
                 label="Add Song"
                 variant="brand"
