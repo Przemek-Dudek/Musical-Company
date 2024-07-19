@@ -1,0 +1,8 @@
+[
+    {
+        "sobject": "Song__c",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": ["Songs.json"]
+    }
+]
