@@ -1,0 +1,39 @@
+import { LightningElement, api } from 'lwc';
+
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
+export default class MixConstructor extends LightningElement
+{
+    @api selectedContactId;
+    @api mixName = 'New Mix';
+
+    selectedSongs = [];
+
+    handleContactSelect(event)
+    {
+        this.selectedContactId = event.detail.recordId;
+
+        console.log('Contact ID: ' + this.selectedContactId);
+    }
+
+    handleMixNameChange(event)
+    {
+        this.mixName = event.detail.value;
+
+        console.log('Mix name: ' + this.mixName);
+    }
+
+    handleSongSelect(event)
+    {
+        const songId = event.detail.recordId;
+
+        if (this.selectedSongs.includes(songId))
+        {
+            this.selectedSongs = this.selectedSongs.filter(song => song !== songId);
+        }
+        else
+        {
+            this.selectedSongs.push(songId);
+        }
+    }
+}
