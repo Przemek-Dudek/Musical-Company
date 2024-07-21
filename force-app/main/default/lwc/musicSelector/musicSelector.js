@@ -89,6 +89,9 @@ export default class MusicSelector extends LightningElement {
         if (data)
         {
             this.songs = data;
+
+            const event = new CustomEvent('songsloaded', { detail: this.songs });
+            this.dispatchEvent(event);
         }
         else if (error)
         {

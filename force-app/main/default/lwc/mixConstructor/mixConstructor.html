@@ -1,8 +1,8 @@
 <template>
     <header class="slds-modal__header">
-        <c-mix-settings oncontact={handleContactSelect} onname={handleMixNameChange}></c-mix-settings>
+        <c-mix-settings oncontact={handleContactSelect} onname={handleMixNameChange} selected-songs={selectedSongs}></c-mix-settings>
     </header>
     <footer>
-        <c-music-selector onselect={handleSongSelect}></c-music-selector>
+        <c-music-selector onsongsloaded={handleSongSelect}></c-music-selector>
     </footer>
 </template>

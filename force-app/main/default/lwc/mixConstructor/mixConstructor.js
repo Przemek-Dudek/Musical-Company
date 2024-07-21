@@ -23,15 +23,8 @@ export default class MixConstructor extends LightningElement
 
     handleSongSelect(event)
     {
-        const songId = event.detail.recordId;
+        this.selectedSongs = event.detail;
 
-        if (this.selectedSongs.includes(songId))
-        {
-            this.selectedSongs = this.selectedSongs.filter(song => song !== songId);
-        }
-        else
-        {
-            this.selectedSongs.push(songId);
-        }
+        console.log('Selected songs: ' + this.selectedSongs);
     }
 }

@@ -4,8 +4,7 @@ export default class MixSettings extends LightningElement
 {
     @api selectedContactId;
     @api mixName = 'New Mix';
-
-    selectedSongs = [];
+    @api selectedSongs = [];
 
     handleContactSelect(event)
     {
@@ -37,7 +36,5 @@ export default class MixSettings extends LightningElement
         {
             this.selectedSongs.push(songId);
         }
-
-        console.log('Selected: song' + this.selectedSongs);
     }
 }
