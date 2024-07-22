@@ -9,6 +9,7 @@ export default class MixConstructor extends LightningElement
     connectedCallback()
     {
         this.dispatchEvent(new CustomEvent('name', { detail: { value: this.mixName } }));
+        this.dispatchEvent(new CustomEvent('contact', { detail: { recordId: this.selectedContactId } }));
     }
 
     handleContactSelect(event) {

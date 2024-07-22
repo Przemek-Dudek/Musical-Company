@@ -1,8 +1,8 @@
-.lgc-bg {
-    background-color: rgb(242 242 242);
+.custom-border-padding {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
 }
 
-.custom-title {
-    font-size: 1.5em;
+.custom-text-padding-left {
+    padding-left: 1.77rem;
 }
-

@@ -1,5 +1,4 @@
 <template>
-    <!-- <h2 class="slds-text-heading_medium">{mixName}</h2> -->
         <div class="slds-grid slds-wrap">
             <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
                 <lightning-input 
@@ -19,39 +18,18 @@
                 ></lightning-record-picker>
             </div>
         </div>
-        <div class="slds-p-around_medium">
-            <div class="lgc-bg">
-                <div class="custom-title slds-var-p-top_medium">{mixName}</div>
-                <div class="slds-grid slds-wrap">
-                    <div class="slds-col slds-size_1-of-2 slds-grid slds-wrap slds-var-p-around_medium">
-                        <div  class="slds-col slds-size_3-of-4">
-                            <p class="slds-truncate">Track Count:</p>
-                        </div>
-                        <div  class="slds-col slds-size_1-of-4">
-                            <p class="slds-truncate">{trackCount}</p>
-                        </div>
-                        <div  class="slds-col slds-size_3-of-4">
-                            <p class="slds-truncate">Mix Length:</p>
-                        </div>
-                        <div  class="slds-col slds-size_1-of-4">
-                            <p class="slds-truncate">{formattedTimeCount}</p>
-                        </div>
-                    </div>
-                    <div class="slds-col slds-size_1-of-2 slds-grid slds-wrap slds-var-p-around_medium">
-                        <div  class="slds-col slds-size_3-of-4">
-                            <p class="slds-truncate">Remaining tracks:</p>
-                        </div>
-                        <div  class="slds-col slds-size_1-of-4">
-                            <p class="slds-truncate">{remainingTracks}</p>
-                        </div>
-                        <div  class="slds-col slds-size_3-of-4">
-                            <p class="slds-truncate">Remaining length:</p>
-                        </div>
-                        <div  class="slds-col slds-size_1-of-4">
-                            <p class="slds-truncate">{remainingTime}</p>
-                        </div>
-                    </div>
-                </div>
+        <div class="custom-border-padding slds-text-align_left">
+            <div class="slds-grid slds-wrap slds-gutters slds-box slds-box_small">
+                <div class="slds-size_1-of-2">Mix name:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{mixName}</div>
+                <div class="slds-size_1-of-2">Track count:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{trackCount}</div>
+                <div class="slds-size_1-of-2">Remaining tracks:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{remainingTracks}</div>
+                <div class="slds-size_1-of-2">Mix length:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{formattedTimeCount}</div>
+                <div class="slds-size_1-of-2">Remaining length:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{remainingTime}</div>
             </div>
         </div>
 </template>
