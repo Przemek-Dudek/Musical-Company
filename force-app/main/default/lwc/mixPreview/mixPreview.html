@@ -1,25 +1,30 @@
 <template>
-    <div class="custom-padding">
-        <div class="slds-grid slds-wrap slds-gutters slds-box slds-box_small">
-            <div class="slds-size_1-of-2">Mix name:</div>
-            <div class="slds-size_1-of-2">{mixName}</div>
-            <div class="slds-size_1-of-2">Created by:</div>
-            <div class="slds-size_1-of-2">{contactName}</div>
-            <div class="slds-size_1-of-2">Track count:</div>
-            <div class="slds-size_1-of-2">{trackCount}</div>
-            <div class="slds-size_1-of-2">Mix length:</div>
-            <div class="slds-size_1-of-2">{mixLength}</div>
-        </div>
+    <div lwc:if={isSongsLimitExceeded}>
+        Couldnt load the mix as it exceeds the limit of 20 songs.
     </div>
-    <div lwc:if={trackCount}>
-        <div class="slds-grid slds-wrap slds-gutters slds-var-p-horizontal_x-large">
-            <div class="slds-col slds-var-p-around_small slds-size_1-of-1">
-                <lightning-datatable
-                    data={selectedSongs}
-                    columns={columns}
-                    key-field="Id"
-                    hide-checkbox-column="true"
-                ></lightning-datatable>
+    <div lwc:else>
+        <div class="custom-padding">
+            <div class="slds-grid slds-wrap slds-gutters slds-box slds-box_small">
+                <div class="slds-size_1-of-2">Mix name:</div>
+                <div class="slds-size_1-of-2">{mixName}</div>
+                <div class="slds-size_1-of-2">Created by:</div>
+                <div class="slds-size_1-of-2">{contactName}</div>
+                <div class="slds-size_1-of-2">Track count:</div>
+                <div class="slds-size_1-of-2">{trackCount}</div>
+                <div class="slds-size_1-of-2">Mix length:</div>
+                <div class="slds-size_1-of-2">{mixLength}</div>
+            </div>
+        </div>
+        <div lwc:if={trackCount}>
+            <div class="slds-grid slds-wrap slds-gutters slds-var-p-horizontal_x-large">
+                <div class="slds-col slds-var-p-around_small slds-size_1-of-1 datatable-container">
+                    <lightning-datatable
+                        data={selectedSongs}
+                        columns={columns}
+                        key-field="Id"
+                        hide-checkbox-column="true"
+                    ></lightning-datatable>
+                </div>
             </div>
         </div>
     </div>

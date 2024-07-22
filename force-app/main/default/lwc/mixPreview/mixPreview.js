@@ -1,8 +1,8 @@
 import { getRecord } from 'lightning/uiRecordApi';
 import { LightningElement, api, track, wire } from 'lwc';
 
-export default class MixPreview extends LightningElement {
-    // Define columns for the lightning-datatable
+export default class MixPreview extends LightningElement
+{
     columns = [
         { label: 'Name', fieldName: 'Name' },
         { label: 'Artist', fieldName: 'Artist__c' },
@@ -26,6 +26,11 @@ export default class MixPreview extends LightningElement {
             ...song,
             formattedLength: this.formatTime(song.Length__c)
         }));
+    }
+
+    get isSongsLimitExceeded()
+    {
+        return this._selectedSongs.length > 20;
     }
 
     get trackCount() {
