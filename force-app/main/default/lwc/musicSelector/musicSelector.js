@@ -1,97 +1,72 @@
 import { LightningElement, wire, track } from 'lwc';
-import getSongsByIds from '@salesforce/apex/SongController.getSongsByIds';
+import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
+import getGenres from '@salesforce/apex/SongController.getGenres';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class MusicSelector extends LightningElement {
-    musicRecordId;
-
+export default class MusicSelector extends LightningElement
+{
+    chosenGenre = 'all';
     @track musicList = [];
+    @track genres
+    @track chosenSongs = [];
 
-    @track songs;
     @track columns = [
-        { label: 'Name', fieldName: 'Name' },
+        { 
+            label: 'Name',
+            fieldName: 'url',
+            type: 'url',
+            typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+        },
         { label: 'Artist', fieldName: 'Artist__c' },
         { label: 'Genre', fieldName: 'Genre__c' },
-        { label: 'Length', fieldName: 'Length__c' },
-        {
-            type: 'button-icon',
-            fixedWidth: 60,
-            typeAttributes: {
-                name: 'delete',
-                iconName: 'utility:delete',
-                variant: 'bare',
-                alternativeText: 'Delete',
-                class: 'slds-icon slds-icon_x-small slds-icon-text-error'
-            }
-        }
+        { label: 'Length', fieldName: 'formattedTime' }
     ];
 
-    handleSelect(event)
+    handleGenreChange(event)
     {
-        this.musicRecordId = event.detail.recordId;
-    }
-
-    handleAddSong()
-    {
-        if (!this.musicRecordId)
-        {
-            return;
-        }
-
-        if (this.musicList.length >= 20)
-        {
-            const event = new ShowToastEvent({
-                title: 'Error',
-                message: 'Mix can only have 20 songs',
-                variant: 'error'
-            });
-
-            this.dispatchEvent(event);
-            return;
-        }
-
-        if (!this.musicList.includes(this.musicRecordId))
-        {
-            this.musicList = [...this.musicList, this.musicRecordId];
-        }
-        else
-        {
-            const event = new ShowToastEvent({
-                title: 'Error',
-                message: 'Song already in mix',
-                variant: 'error'
-            });
-
-            this.dispatchEvent(event);
-        }
-
-
+        this.chosenGenre = event.detail.value;
     }
 
     handleRowAction(event)
     {
-        const actionName = event.detail.action.name;
-        const row = event.detail.row;
-        if (actionName === 'delete')
-        {
-            this.deleteSong(row.Id);
-        }
+        this.chosenSongs = event.detail.selectedRows;
+
+        const songEvent = new CustomEvent('songsselected', { detail: this.chosenSongs });
+        this.dispatchEvent(songEvent);
     }
 
-    deleteSong(songId)
+    formatTime(minutes)
     {
-        this.musicList = this.musicList.filter(id => id !== songId);
+        const totalMinutes = Math.floor(minutes);
+        const decimalMinutes = minutes - totalMinutes;
+        const seconds = Math.round(decimalMinutes * 60);
+        return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    @wire(getSongsByIds, { musicList: '$musicList' })
+    @wire(getSongsByGenre, { genre: '$chosenGenre' })
     wiredSongs({ error, data })
     {
         if (data)
         {
-            this.songs = data;
+            this.musicList = data.map(song => ({
+                ...song,
+                formattedTime: this.formatTime(song.Length__c),
+                url: '/lightning/r/Song__c/' + song.Id + '/view'
+            }));
+        }
+        else if (error)
+        {
+            console.error(error);
+        }
+    }
 
-            const event = new CustomEvent('songsloaded', { detail: this.songs });
-            this.dispatchEvent(event);
+    @wire(getGenres)
+    wiredGenres({ error, data })
+    {
+        if (data)
+        {
+            this.genres = data.map(genre => ({ label: genre, value: genre }));
+            this.genres.unshift({ label: 'All', value: 'all' });
         }
         else if (error)
         {
