@@ -1,30 +1,28 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 
 export default class MixConstructor extends LightningElement
 {
     @api selectedContactId;
     @api mixName = 'New Mix';
+    @track selectedSongs = [];
 
-    selectedSongs = [];
-
-    handleContactSelect(event)
+    connectedCallback()
     {
+        this.dispatchEvent(new CustomEvent('name', { detail: { value: this.mixName } }));
+    }
+
+    handleContactSelect(event) {
         this.selectedContactId = event.detail.recordId;
-
-        console.log('Contact ID: ' + this.selectedContactId);
+        this.dispatchEvent(new CustomEvent('contact', { detail: { recordId: this.selectedContactId } }));
     }
 
-    handleMixNameChange(event)
-    {
+    handleMixNameChange(event) {
         this.mixName = event.detail.value;
-
-        console.log('Mix name: ' + this.mixName);
+        this.dispatchEvent(new CustomEvent('name', { detail: { value: this.mixName } }));
     }
 
-    handleSongSelect(event)
-    {
+    handleSongSelect(event) {
         this.selectedSongs = event.detail;
-
-        console.log('Selected songs: ' + this.selectedSongs);
+        this.dispatchEvent(new CustomEvent('songsloaded', { detail: this.selectedSongs }));
     }
 }

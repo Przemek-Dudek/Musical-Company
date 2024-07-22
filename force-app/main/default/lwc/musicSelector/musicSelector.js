@@ -15,7 +15,7 @@ export default class MusicSelector extends LightningElement {
         { label: 'Length', fieldName: 'Length__c' },
         {
             type: 'button-icon',
-            fixedWidth: 40,
+            fixedWidth: 60,
             typeAttributes: {
                 name: 'delete',
                 iconName: 'utility:delete',
