@@ -5,7 +5,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class MusicSelector extends LightningElement
 {
-    chosenGenre = 'all';
+    selectedGenre = 'all';
     @track musicList = [];
     @track genres
     @track chosenSongs = [];
@@ -24,7 +24,7 @@ export default class MusicSelector extends LightningElement
 
     handleGenreChange(event)
     {
-        this.chosenGenre = event.detail.value;
+        this.selectedGenre = event.detail.value;
     }
 
     handleRowAction(event)
@@ -43,7 +43,7 @@ export default class MusicSelector extends LightningElement
         return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    @wire(getSongsByGenre, { genre: '$chosenGenre' })
+    @wire(getSongsByGenre, { genre: '$selectedGenre' })
     wiredSongs({ error, data })
     {
         if (data)
