@@ -1,6 +1,7 @@
 import { LightningElement, wire, track } from 'lwc';
 
 import getGenres from '@salesforce/apex/SongController.getGenres';
+import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
 
 export default class MusicTable extends LightningElement
 {
@@ -20,6 +21,9 @@ export default class MusicTable extends LightningElement
     @track genres;
     @track currentPage = 1;
     @track totalPages = 1;
+    
+    @track musicList = [];
+    @track displayList = [];
 
     @wire(getGenres)
     wiredGenres({ error, data }) {
@@ -31,6 +35,34 @@ export default class MusicTable extends LightningElement
         }
     }
 
+    @wire(getSongsByGenre, { genre: '$selectedGenre' })
+    wiredSongs({ error, data }) {
+        if (data) {
+            this.musicList = data.map(song => ({
+                ...song,
+                formattedTime: this.formatTime(song.Length__c),
+                url: '/lightning/r/Song__c/' + song.Id + '/view'
+            }));
+
+            this.totalPages = Math.ceil(this.musicList.length / 10);
+            this.displayList = this.musicList.slice(0, 10);
+        } else if (error) {
+            console.error(error);
+        }
+    }
+
+    formatTime(minutes) {
+        const totalMinutes = Math.floor(minutes);
+        const decimalMinutes = minutes - totalMinutes;
+        const seconds = Math.round(decimalMinutes * 60);
+        return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    updateDisplayList()
+    {
+        this.displayList = this.musicList.slice((this.currentPage - 1) * 10, this.currentPage * 10);
+    }
+
     handleGenreChange(event) {
         this.selectedGenre = event.detail.value;
     }
@@ -38,21 +70,25 @@ export default class MusicTable extends LightningElement
     handleFirstPage()
     {
         this.currentPage = 1;
+        this.updateDisplayList();
     }
 
     handlePreviousPage()
     {
         this.currentPage = Math.max(1, this.currentPage - 1);
+        this.updateDisplayList();
     }
 
     handleNextPage()
     {
         this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+        this.updateDisplayList();
     }
 
     handleLastPage()
     {
         this.currentPage = this.totalPages;
+        this.updateDisplayList();
     }
 
     get isFirstPage() {
