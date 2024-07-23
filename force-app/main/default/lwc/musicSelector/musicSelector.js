@@ -1,7 +1,6 @@
 import { LightningElement, wire, api, track } from 'lwc';
 import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
 import getGenres from '@salesforce/apex/SongController.getGenres';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class MusicSelector extends LightningElement {
     selectedGenre = 'all';

@@ -1,0 +1,61 @@
+<template>
+    <div class="slds-p-horizontal_x-large">
+        <div class="slds-box slds-box_small custom-border-padding">
+            <div class="slds-p-top_xxx-small">
+                <lightning-combobox
+                    name="genreFilter"
+                    value={selectedGenre}
+                    placeholder="Select Genre"
+                    options={genres}
+                    onchange={handleGenreChange}
+                ></lightning-combobox>
+            </div>
+            <div class="slds-p-top_medium">
+                <lightning-datatable
+                    key-field="Id"
+                    data={musicList}
+                    columns={columns}
+                    onrowselection={handleRowAction}
+                    selected-rows={selectedRows}
+                ></lightning-datatable>
+            </div>
+            <div class="slds-grid slds-align_absolute-center slds-p-top_medium">
+                <lightning-button-icon
+                    icon-name="utility:left" 
+                    alternative-text="First Page"
+                    title="First Page"
+                    onclick={handleFirstPage}
+                    class="pagination-icon"
+                    disabled={isFirstPage}
+                ></lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:chevronleft" 
+                    alternative-text="Previous Page"
+                    title="Previous Page"
+                    onclick={handlePreviousPage}
+                    class="pagination-icon"
+                    disabled={isFirstPage}
+                ></lightning-button-icon>
+                <div class="pagination-info">
+                    {currentPage} of {totalPages}
+                </div>
+                <lightning-button-icon
+                    icon-name="utility:chevronright"
+                    alternative-text="Next Page"
+                    title="Next Page"
+                    onclick={handleNextPage}
+                    class="pagination-icon"
+                    disabled={isLastPage}
+                ></lightning-button-icon>
+                <lightning-button-icon
+                    icon-name="utility:right" 
+                    alternative-text="Last Page"
+                    title="Last Page"
+                    onclick={handleLastPage}
+                    class="pagination-icon"
+                    disabled={isLastPage}
+                ></lightning-button-icon>
+            </div>
+        </div>
+    </div>
+</template>

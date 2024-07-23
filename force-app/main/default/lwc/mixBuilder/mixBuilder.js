@@ -2,6 +2,8 @@ import { api, LightningElement, wire, track } from 'lwc';
 import handleMixUpsert from '@salesforce/apex/MixController.handleMixUpsert';
 import getMix from '@salesforce/apex/MixController.getMix';
 
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 export default class MixBuilder extends LightningElement
 {
     @api recordId;
@@ -20,6 +22,11 @@ export default class MixBuilder extends LightningElement
             this.selectedSongIds = data.selectedSongs;
         } else if (error) {
             console.error('Error loading mix', error);
+        }
+
+        if(!this.mixName)
+        {
+            this.mixName = 'New Mix';
         }
     }
 
@@ -52,6 +59,11 @@ export default class MixBuilder extends LightningElement
     }
 
     handleSave() {
+        if(!this.mixValid())
+        {
+            return;
+        }
+
         const mix = {
             mixId: this.recordId,
             mixName: this.mixName,
@@ -67,5 +79,40 @@ export default class MixBuilder extends LightningElement
             .catch(error => {
                 console.error('Error saving mix', error);
             });
+    }
+
+    mixValid()
+    {
+        if (!this.mixName) {
+            this.dispatchToastError('Please enter a mix name.');
+            return false;
+        }
+
+        if (!this.selectedContactId) {
+            this.dispatchToastError('Please select a contact.');
+            return false;
+        }
+
+        if (this.selectedSongs.length > 20 || this.selectedSongs.length < 1) {
+            this.dispatchToastError('Mixes must have between 1 and 20 songs.');
+            return false;
+        }
+
+        if (this.selectedSongs.reduce((acc, song) => acc + song.Length__c, 0) > 90) {
+            this.dispatchToastError('Mixes must be 90 minutes or less.');
+            return false;
+        }
+
+        return true;
+    }
+
+    dispatchToastError(message) {
+        const toast = new ShowToastEvent({
+            title: 'Error',
+            message: message,
+            variant: 'error'
+        });
+
+        this.dispatchEvent(toast);
     }
 }
