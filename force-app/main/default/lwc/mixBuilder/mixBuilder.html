@@ -7,10 +7,21 @@
             <div class="slds-modal__content slds-var-p-around_medium">
                 <lightning-tabset>
                     <lightning-tab label="Mix Constructor">
-                        <c-mix-constructor onsongsloaded={handleSongsEvent} onname={handleNameEvent} oncontact={handleContactEvent}></c-mix-constructor>
+                        <c-mix-constructor 
+                            onsongsloaded={handleSongsEvent}
+                            onname={handleNameEvent}
+                            oncontact={handleContactEvent}
+                            selected-contact-id={selectedContactId}
+                            selected-song-ids={selectedSongIds}
+                            mix-name={mixName}
+                        ></c-mix-constructor>
                     </lightning-tab>
                     <lightning-tab label="Mix Preview">
-                        <c-mix-preview selected-songs={selectedSongs} selected-contact-id={selectedContactId} mix-name={mixName}></c-mix-preview>
+                        <c-mix-preview
+                            selected-songs={selectedSongs}
+                            selected-contact-id={selectedContactId}
+                            mix-name={mixName}
+                        ></c-mix-preview>
                     </lightning-tab>
                 </lightning-tabset>
             </div>

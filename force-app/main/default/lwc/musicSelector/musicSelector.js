@@ -1,14 +1,15 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, api, track } from 'lwc';
 import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
 import getGenres from '@salesforce/apex/SongController.getGenres';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class MusicSelector extends LightningElement
-{
+export default class MusicSelector extends LightningElement {
     selectedGenre = 'all';
     @track musicList = [];
-    @track genres
+    @track genres;
     @track chosenSongs = [];
+    @api selectedSongIds = [];
+    @track selectedRows = [];
 
     @track columns = [
         { 
@@ -22,21 +23,18 @@ export default class MusicSelector extends LightningElement
         { label: 'Length', fieldName: 'formattedTime' }
     ];
 
-    handleGenreChange(event)
-    {
+    handleGenreChange(event) {
         this.selectedGenre = event.detail.value;
     }
 
-    handleRowAction(event)
-    {
+    handleRowAction(event) {
         this.chosenSongs = event.detail.selectedRows;
 
         const songEvent = new CustomEvent('songsselected', { detail: this.chosenSongs });
         this.dispatchEvent(songEvent);
     }
 
-    formatTime(minutes)
-    {
+    formatTime(minutes) {
         const totalMinutes = Math.floor(minutes);
         const decimalMinutes = minutes - totalMinutes;
         const seconds = Math.round(decimalMinutes * 60);
@@ -44,33 +42,37 @@ export default class MusicSelector extends LightningElement
     }
 
     @wire(getSongsByGenre, { genre: '$selectedGenre' })
-    wiredSongs({ error, data })
-    {
-        if (data)
-        {
+    wiredSongs({ error, data }) {
+        if (data) {
             this.musicList = data.map(song => ({
                 ...song,
                 formattedTime: this.formatTime(song.Length__c),
                 url: '/lightning/r/Song__c/' + song.Id + '/view'
             }));
-        }
-        else if (error)
-        {
+            this.updateSelectedRows();
+        } else if (error) {
             console.error(error);
         }
     }
 
     @wire(getGenres)
-    wiredGenres({ error, data })
-    {
-        if (data)
-        {
+    wiredGenres({ error, data }) {
+        if (data) {
             this.genres = data.map(genre => ({ label: genre, value: genre }));
             this.genres.unshift({ label: 'All', value: 'all' });
-        }
-        else if (error)
-        {
+        } else if (error) {
             console.error(error);
         }
+    }
+
+    updateSelectedRows() {
+        this.selectedRows = this.selectedSongIds;
+
+        this.chosenSongs = this.musicList.filter(song => 
+            this.selectedSongIds.includes(song.Id)
+        );
+
+        const songEvent = new CustomEvent('songsselected', { detail: this.chosenSongs });
+        this.dispatchEvent(songEvent);
     }
 }
