@@ -18,23 +18,17 @@ public with sharing class MixController
     @AuraEnabled(cacheable=true)
     public static String getMix(String mixId)
     {
-        Mix__c selectedMix = [SELECT Id, Name, Customer__c FROM Mix__c WHERE Id = :mixId];
+        Mix__c selectedMix = MixSelector.selectByMixId(new Set<Id>{mixId})[0];
 
         mixWrapper wrapper = new mixWrapper(selectedMix.Id, selectedMix.Name, selectedMix.Customer__c, new List<Song__c>());
 
-        List<Track__c> mixTracks = [SELECT Song__c FROM Track__c WHERE Mix__c = :mixId];
+        List<Track__c> mixTracks = TrackSelector.getTracksByMixIds(new Set<Id>{selectedMix.Id});
 
-        Set<Id> selectedSongIds = new Set<Id>();
-        for (Track__c track : mixTracks)
-        {
-            selectedSongIds.add(track.Song__c);
-        }
+        Set<Id> selectedSongIds = TrackService.getSongIdsFromTracks(mixTracks);
 
-        wrapper.selectedSongs = [SELECT Id, Name, Artist__c, Genre__c, Length__c FROM Song__c WHERE Id IN :selectedSongIds];
+        wrapper.selectedSongs = SongSelector.selectById(selectedSongIds);
 
-        String mixJson = JSON.serialize(wrapper);
-
-        return mixJson;
+        return JSON.serialize(wrapper);
     }
 
     @AuraEnabled(cacheable=false)

@@ -1,5 +1,15 @@
-public with sharing class TrackSelector
+public with sharing class TrackSelector extends fflib_SObjectSelector
 {
+    public List<Schema.SObjectField> getSObjectFieldList()
+    {
+        return new List<Schema.SObjectField>(Track__c.SObjectType.getDescribe().fields.getMap().values());
+    }
+
+    public Schema.SObjectType getSObjectType()
+    {
+        return Track__c.SObjectType;
+    }
+
     public static List<AggregateResult> countTracksOnSongs(Set<Id> songIds)
     {
         return [
@@ -30,9 +40,17 @@ public with sharing class TrackSelector
 
     public static List<Track__c> getTracksBySongIds(Set<Id> songIds)
     {
-        return [
-            SELECT Id, Song__c
-            FROM Track__c
-            WHERE Song__c IN :songIds];
+        TrackSelector selector = new TrackSelector();
+
+        fflib_QueryFactory queryFactory = selector.newQueryFactory();
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Song__c IN :songIds').toSOQL());
+    }
+
+    public static List<Track__c> getTracksByMixIds(Set<Id> mixIds)
+    {
+        TrackSelector selector = new TrackSelector();
+
+        fflib_QueryFactory queryFactory = selector.newQueryFactory();
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Id IN :mixIds').toSOQL());
     }
 }

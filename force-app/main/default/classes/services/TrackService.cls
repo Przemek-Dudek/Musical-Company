@@ -57,4 +57,19 @@ public with sharing class TrackService
 
         return trackIds;
     }
+
+    public static Set<Id> getSongIdsFromTracks(List<Track__c> tracks)
+    {
+        Set<Id> songIds = new Set<Id>();
+
+        for (Track__c track : tracks)
+        {
+            if(track.Song__c != null)
+            {
+                songIds.add(track.Song__c);
+            }
+        }
+
+        return songIds;
+    }
 }

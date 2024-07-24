@@ -53,7 +53,7 @@ export default class MusicTable extends LightningElement
         }
     }
 
-    get selectedRows()
+    get selectedRowsGet()
     {
         return this.selectedSongs.filter(
             song => this.displayList.some(
@@ -65,16 +65,18 @@ export default class MusicTable extends LightningElement
         const selectedRows = event.detail.selectedRows;
         const action = event.detail.config.action;
 
-        console.log(event.detail);
-
         if (action === 'rowSelect' || action === 'selectAllRows')
         {
             this.selectedSongs = [...new Set([...this.selectedSongs, ...selectedRows])];
         }
-        else if (action === 'rowDeselect' || action === 'deselectAllRows')
+        else if (action === 'rowDeselect')
         {
-            this.selectedSongs = this.selectedSongs.filter(song => selectedRows.includes(song));
-        }        
+            this.selectedSongs = this.selectedSongs.filter(song => song.Id !== event.detail.config.value);
+        }
+        else if (action === 'deselectAllRows')
+        {
+            this.selectedSongs = this.selectedSongs.filter(song => selectedRows.some(row => row.Id === song.Id));
+        }
 
         const songEvent = new CustomEvent('songsselected', { detail: this.selectedSongs });
         this.dispatchEvent(songEvent);
