@@ -20,8 +20,8 @@ public with sharing class SongController
     }
 
     @AuraEnabled(cacheable=true)
-    public static List<Song__c> getSongsByGenre(String genre)
+    public static List<Song__c> getSongsByGenre(String genre, Integer offset)
     {
-        return SongSelector.selectByGenre(genre);
+        return SongSelector.selectByGenre(genre, offset);
     }
 }

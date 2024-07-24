@@ -13,7 +13,6 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         return fieldsList;
     }
 
-
     public Schema.SObjectType getSObjectType()
     {
         return Song__c.SObjectType;
@@ -27,7 +26,7 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         return (List<Song__c>) Database.query(queryFactory.setCondition('Id IN :ids').toSOQL());
     }
 
-    public static List<Song__c> selectByGenre(String genre)
+    public static List<Song__c> selectByGenre(String genre, Integer offset)
     {
         SongSelector selector = new SongSelector();
 
@@ -38,6 +37,8 @@ public with sharing class SongSelector extends fflib_SObjectSelector
             queryFactory.setCondition('Genre__c = :genre');
         }
         queryFactory.addOrdering('Name', fflib_QueryFactory.SortOrder.ASCENDING);
+        queryFactory.setLimit(100);
+        queryFactory.setOffset(offset*100);
 
         return (List<Song__c>) Database.query(queryFactory.toSOQL());
     }

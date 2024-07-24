@@ -37,7 +37,7 @@ export default class MusicTable extends LightningElement
         }
     }
 
-    @wire(getSongsByGenre, { genre: '$selectedGenre' })
+    @wire(getSongsByGenre, { genre: '$selectedGenre', offset: '$offset' })
     wiredSongs({ error, data }) {
         if (data) {
             this.musicList = data.map(song => ({
@@ -51,6 +51,10 @@ export default class MusicTable extends LightningElement
         } else if (error) {
             console.error(error);
         }
+    }
+
+    get offset() {
+        return Math.floor((this.currentPage - 1) / 10);
     }
 
     get selectedRowsGet()
