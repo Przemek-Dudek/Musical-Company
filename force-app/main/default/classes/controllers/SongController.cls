@@ -3,10 +3,7 @@ public with sharing class SongController
     @AuraEnabled(cacheable=true)
     public static List<Song__c> getSongsByIds(List<Id> musicList)
     {
-        List<Song__c> res = [SELECT Id, Name, Genre__c, Length__c, Artist__c FROM Song__c WHERE Id IN :musicList];
-        System.debug(res);
-
-        return res;
+        return SongSelector.selectById(new Set<Id>(musicList));
     }
 
     @AuraEnabled(cacheable=true)
@@ -26,19 +23,6 @@ public with sharing class SongController
     @AuraEnabled(cacheable=true)
     public static List<Song__c> getSongsByGenre(String genre)
     {
-        List<Song__c> res = new List<Song__c>();
-
-        String query = 'SELECT Id, Name, Genre__c, Length__c, Artist__c FROM Song__c';
-
-        if(genre != 'all')
-        {
-            query += ' WHERE Genre__c = \'' + genre + '\'';
-        }
-
-        query += ' ORDER BY Name ASC';
-
-        res = Database.query(query);
-
-        return res;
+        return SongSelector.selectByGenre(genre);
     }
 }

@@ -10,7 +10,7 @@ public with sharing class MixSelector extends fflib_SObjectSelector
         return Mix__c.SObjectType;
     }
 
-    public static List<Mix__c> selectByMixId(Set<Id> mixIds)
+    public static List<Mix__c> selectById(Set<Id> mixIds)
     {
         MixSelector selector = new MixSelector();
 

@@ -67,7 +67,8 @@ export default class MusicTable extends LightningElement
 
         if (action === 'rowSelect' || action === 'selectAllRows')
         {
-            this.selectedSongs = [...new Set([...this.selectedSongs, ...selectedRows])];
+            this.selectedSongs = this.selectedSongs.filter(song => !selectedRows.some(row => row.Id === song.Id));
+            this.selectedSongs = this.selectedSongs.concat(selectedRows);
         }
         else if (action === 'rowDeselect')
         {
@@ -77,6 +78,8 @@ export default class MusicTable extends LightningElement
         {
             this.selectedSongs = this.selectedSongs.filter(song => selectedRows.some(row => row.Id === song.Id));
         }
+
+        console.log(JSON.stringify(this.selectedSongs));
 
         const songEvent = new CustomEvent('songsselected', { detail: this.selectedSongs });
         this.dispatchEvent(songEvent);

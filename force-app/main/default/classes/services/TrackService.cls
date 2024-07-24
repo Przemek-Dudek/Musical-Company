@@ -72,4 +72,16 @@ public with sharing class TrackService
 
         return songIds;
     }
+
+    public static void createTracks(Id mixId, List<Song__c> songs)
+    {
+        List<Track__c> newTracks = new List<Track__c>();
+
+        for (Song__c song : songs)
+        {
+            newTracks.add(new Track__c(Mix__c = mixId, Song__c = song.Id));
+        }
+
+        insert newTracks;
+    }
 }

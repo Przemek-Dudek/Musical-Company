@@ -78,4 +78,128 @@ public with sharing class MixService
 
         return fullMixesIds;
     }
+
+    public static void createNewMix(MixWrapper mix)
+    {
+        Mix__c newMix = new Mix__c(Name = mix.mixName, Customer__c = mix.contactId);
+        insert newMix;
+
+        TrackService.createTracks(newMix.Id, mix.selectedSongs);
+    }
+
+    public static void updateMixData(MixWrapper mix)
+    {
+        Mix__c existingMix = MixSelector.selectById(new Set<Id>{mix.mixId})[0];
+
+        if (existingMix.Name == mix.mixName && existingMix.Customer__c == mix.contactId)
+        {
+            return;
+        }
+
+        existingMix.Name = mix.mixName;
+        existingMix.Customer__c = mix.contactId;
+
+        update existingMix;
+    }
+
+    public static void updateExistingMix(MixWrapper mix)
+    {
+        updateMixData(mix);
+
+        List<Track__c> existingTracks = TrackSelector.selectByMixId(new Set<Id>{mix.mixId});
+
+        Set<Id> selectedSongIds = SongService.getIdsFromSongs(mix.selectedSongs);
+
+        for (Integer i = 0; i < existingTracks.size(); i++)
+        {
+            Track__c track = existingTracks[i];
+
+            if (!selectedSongIds.contains(track.Song__c))
+            {
+                existingTracks.remove(i);
+                selectedSongIds.remove(track.Song__c);
+            }
+        }
+
+        System.debug('existingTracks: ' + existingTracks);
+
+        List<Track__c> tracksToDelete = new List<Track__c>();
+
+        Integer delta = mix.selectedSongs.size() - existingTracks.size();
+        System.debug('delta: ' + delta);
+        if (delta > 0)
+        {
+            for (Integer i = 0; i < delta; i++)
+            {
+                existingTracks.add(new Track__c(Mix__c = mix.mixId));
+            }
+        }
+        else if (delta < 0)
+        {
+            for (Integer i = 0; i < -delta; i++)
+            {
+                tracksToDelete.add(existingTracks[i]);
+                existingTracks.remove(i);
+            }
+        }
+
+        for (Track__c track : existingTracks)
+        {
+            track.Song__c = selectedSongIds.iterator().next();
+        }
+
+        System.debug(existingTracks);
+        System.debug(tracksToDelete);
+
+        delete tracksToDelete;
+
+        upsert existingTracks;
+
+        
+        // if(existingTracks.size() > mix.selectedSongs.size())
+        // {
+        //     List<Track__c> tracksToDelete = new List<Track__c>();
+
+        //     for (Integer i = 0; i < existingTracks.size(); i++)
+        //     {
+        //         if (i < mix.selectedSongs.size())
+        //         {
+        //             existingTracks[i].Song__c = mix.selectedSongs[i].Id;
+        //         }
+        //         else
+        //         {
+        //             tracksToDelete.add(existingTracks[i]);
+        //             existingTracks.remove(i);
+        //         }
+        //     }
+
+        //     delete tracksToDelete;
+        //     update existingTracks;
+        // }
+        // else if(existingTracks.size() < mix.selectedSongs.size())
+        // {
+        //     for (Integer i = 0; i < mix.selectedSongs.size(); i++)
+        //     {
+        //         if (i < existingTracks.size())
+        //         {
+        //             existingTracks[i].Song__c = mix.selectedSongs[i].Id;
+        //         }
+        //         else
+        //         {
+        //             existingTracks.add(new Track__c(Mix__c = mix.mixId, Song__c = mix.selectedSongs[i].Id));
+        //         }
+        //     }
+
+        //     upsert existingTracks;
+        // }
+        // else
+        // {
+        //     for (Integer i = 0; i < mix.selectedSongs.size(); i++)
+        //     {
+        //         existingTracks[i].Song__c = mix.selectedSongs[i].Id;
+        //     }
+
+        //     update existingTracks;
+        // }
+    }
 }

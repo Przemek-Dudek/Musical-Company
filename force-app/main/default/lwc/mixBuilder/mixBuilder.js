@@ -31,8 +31,6 @@ export default class MixBuilder extends LightningElement
 
     handleSongsEvent(event) {
         this.selectedSongs = event.detail;
-
-        console.log(JSON.stringify(this.selectedSongs));
     }
 
     handleNameEvent(event) {

@@ -46,11 +46,11 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
         return (List<Track__c>) Database.query(queryFactory.setCondition('Song__c IN :songIds').toSOQL());
     }
 
-    public static List<Track__c> getTracksByMixIds(Set<Id> mixIds)
+    public static List<Track__c> selectByMixId(Set<Id> mixIds)
     {
         TrackSelector selector = new TrackSelector();
 
         fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Track__c>) Database.query(queryFactory.setCondition('Id IN :mixIds').toSOQL());
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Mix__c = :mixIds').toSOQL());
     }
 }
