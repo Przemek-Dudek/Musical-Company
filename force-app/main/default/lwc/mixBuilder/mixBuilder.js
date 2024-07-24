@@ -11,7 +11,6 @@ export default class MixBuilder extends LightningElement
     @track selectedContactId;
     @track mixName;
     @track selectedSongs = [];
-    @track selectedSongIds = [];
 
     @wire(getMix, { mixId: '$recordId' })
     wiredMix({ error, data }) {
@@ -19,7 +18,7 @@ export default class MixBuilder extends LightningElement
             data = JSON.parse(data);
             this.mixName = data.mixName;
             this.selectedContactId = data.contactId;
-            this.selectedSongIds = data.selectedSongs;
+            this.selectedSongs = data.selectedSongs;
         } else if (error) {
             console.error('Error loading mix', error);
         }
@@ -28,6 +27,8 @@ export default class MixBuilder extends LightningElement
         {
             this.mixName = 'New Mix';
         }
+
+        console.log(JSON.stringify(this.selectedSongs));
     }
 
     handleSongsEvent(event) {
@@ -68,7 +69,7 @@ export default class MixBuilder extends LightningElement
             mixId: this.recordId,
             mixName: this.mixName,
             contactId: this.selectedContactId,
-            selectedSongs: this.selectedSongs.map(song => song.Id)
+            selectedSongs: this.selectedSongs.map(song => song)
         };
 
         handleMixUpsert({ mixJson: JSON.stringify(mix) })

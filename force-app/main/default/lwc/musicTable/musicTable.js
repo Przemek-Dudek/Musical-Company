@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 
 import getGenres from '@salesforce/apex/SongController.getGenres';
 import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
@@ -25,6 +25,8 @@ export default class MusicTable extends LightningElement
     @track musicList = [];
     @track displayList = [];
 
+    @api selectedSongs = [];
+
     @wire(getGenres)
     wiredGenres({ error, data }) {
         if (data) {
@@ -49,6 +51,33 @@ export default class MusicTable extends LightningElement
         } else if (error) {
             console.error(error);
         }
+    }
+
+    get selectedRows()
+    {
+        return this.selectedSongs.filter(
+            song => this.displayList.some(
+                displaySong => displaySong.Id === song.Id))
+                .map(song => song.Id);
+    }
+
+    handleRowAction(event) {
+        const selectedRows = event.detail.selectedRows;
+        const action = event.detail.config.action;
+
+        console.log(event.detail);
+
+        if (action === 'rowSelect' || action === 'selectAllRows')
+        {
+            this.selectedSongs = [...new Set([...this.selectedSongs, ...selectedRows])];
+        }
+        else if (action === 'rowDeselect' || action === 'deselectAllRows')
+        {
+            this.selectedSongs = this.selectedSongs.filter(song => selectedRows.includes(song));
+        }        
+
+        const songEvent = new CustomEvent('songsselected', { detail: this.selectedSongs });
+        this.dispatchEvent(songEvent);
     }
 
     formatTime(minutes) {

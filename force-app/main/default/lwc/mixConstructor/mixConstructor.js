@@ -4,8 +4,7 @@ export default class MixConstructor extends LightningElement
 {
     @api selectedContactId;
     @api mixName = 'New Mix';
-    @track selectedSongs = [];
-    @api selectedSongIds = [];
+    @api selectedSongs = [];
 
     connectedCallback()
     {

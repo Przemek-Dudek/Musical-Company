@@ -5,9 +5,9 @@ public with sharing class MixController
         Id mixId;
         String mixName;
         Id contactId;
-        List<Id> selectedSongs;
+        List<Song__c> selectedSongs;
 
-        public mixWrapper(Id mixId, String mixName, Id contactId, List<Id> selectedSongs) {
+        public mixWrapper(Id mixId, String mixName, Id contactId, List<Song__c> selectedSongs) {
             this.mixId = mixId;
             this.mixName = mixName;
             this.contactId = contactId;
@@ -20,14 +20,17 @@ public with sharing class MixController
     {
         Mix__c selectedMix = [SELECT Id, Name, Customer__c FROM Mix__c WHERE Id = :mixId];
 
-        mixWrapper wrapper = new mixWrapper(selectedMix.Id, selectedMix.Name, selectedMix.Customer__c, new List<Id>());
+        mixWrapper wrapper = new mixWrapper(selectedMix.Id, selectedMix.Name, selectedMix.Customer__c, new List<Song__c>());
 
         List<Track__c> mixTracks = [SELECT Song__c FROM Track__c WHERE Mix__c = :mixId];
 
+        Set<Id> selectedSongIds = new Set<Id>();
         for (Track__c track : mixTracks)
         {
-            wrapper.selectedSongs.add(track.Song__c);
+            selectedSongIds.add(track.Song__c);
         }
+
+        wrapper.selectedSongs = [SELECT Id, Name, Artist__c, Genre__c, Length__c FROM Song__c WHERE Id IN :selectedSongIds];
 
         String mixJson = JSON.serialize(wrapper);
 
@@ -56,9 +59,9 @@ public with sharing class MixController
 
         List<Track__c> newTracks = new List<Track__c>();
 
-        for (Id songId : mix.selectedSongs)
+        for (Song__c song : mix.selectedSongs)
         {
-            newTracks.add(new Track__c(Mix__c = newMix.Id, Song__c = songId));
+            newTracks.add(new Track__c(Mix__c = newMix.Id, Song__c = song.Id));
         }
 
         insert newTracks;
@@ -83,7 +86,7 @@ public with sharing class MixController
             {
                 if (i < mix.selectedSongs.size())
                 {
-                    existingTracks[i].Song__c = mix.selectedSongs[i];
+                    existingTracks[i].Song__c = mix.selectedSongs[i].Id;
                 }
                 else
                 {
@@ -101,11 +104,11 @@ public with sharing class MixController
             {
                 if (i < existingTracks.size())
                 {
-                    existingTracks[i].Song__c = mix.selectedSongs[i];
+                    existingTracks[i].Song__c = mix.selectedSongs[i].Id;
                 }
                 else
                 {
-                    existingTracks.add(new Track__c(Mix__c = mix.mixId, Song__c = mix.selectedSongs[i]));
+                    existingTracks.add(new Track__c(Mix__c = mix.mixId, Song__c = mix.selectedSongs[i].Id));
                 }
             }
 
@@ -115,7 +118,7 @@ public with sharing class MixController
         {
             for (Integer i = 0; i < mix.selectedSongs.size(); i++)
             {
-                existingTracks[i].Song__c = mix.selectedSongs[i];
+                existingTracks[i].Song__c = mix.selectedSongs[i].Id;
             }
 
             update existingTracks;
