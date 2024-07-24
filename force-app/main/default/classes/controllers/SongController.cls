@@ -10,8 +10,7 @@ public with sharing class SongController
     public static List<String> getGenres()
     {
         List<String> genres = new List<String>();
-        Schema.DescribeFieldResult fieldResult = Song__c.Genre__c.getDescribe();
-        List<Schema.PicklistEntry> picklistEntries = fieldResult.getPicklistValues();
+        List<Schema.PicklistEntry> picklistEntries = Song__c.Genre__c.getDescribe().getPicklistValues();
         
         for (Schema.PicklistEntry entry : picklistEntries) {
             genres.add(entry.getLabel());

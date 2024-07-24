@@ -26,13 +26,9 @@ public with sharing class TrackService
 
     public static Set<Id> getMixIdsFromTracks(Set<Id> trackIds)
     {
-        List<Track__c> tracks = [
-            SELECT Mix__c
-            FROM Track__c
-            WHERE Id IN :trackIds];
+        List<Track__c> tracks = TrackSelector.selectByIds(trackIds);
 
         Set<Id> mixIds = new Set<Id>();
-
         for (Track__c track : tracks)
         {
             if(track.Mix__c != null)
@@ -46,10 +42,9 @@ public with sharing class TrackService
 
     public static Set<Id> getTrackIdsFromSongs(Set<Id> songIds)
     {
+        List<Track__c> tracks = TrackSelector.getTracksBySongIds(songIds);
+
         Set<Id> trackIds = new Set<Id>();
-
-        List<Track__c> tracks = [SELECT Id FROM Track__c WHERE Song__c IN :songIds];
-
         for (Track__c track : tracks)
         {
             trackIds.add(track.Id);
@@ -61,7 +56,6 @@ public with sharing class TrackService
     public static Set<Id> getSongIdsFromTracks(List<Track__c> tracks)
     {
         Set<Id> songIds = new Set<Id>();
-
         for (Track__c track : tracks)
         {
             if(track.Song__c != null)
@@ -76,7 +70,6 @@ public with sharing class TrackService
     public static void createTracks(Id mixId, List<Song__c> songs)
     {
         List<Track__c> newTracks = new List<Track__c>();
-
         for (Song__c song : songs)
         {
             newTracks.add(new Track__c(Mix__c = mixId, Song__c = song.Id));

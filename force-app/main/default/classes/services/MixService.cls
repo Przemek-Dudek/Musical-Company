@@ -145,7 +145,6 @@ public with sharing class MixService
         }
 
         List<Id> songIds = new List<Id>(selectedSongIds);
-
         for (Track__c track : existingTracks)
         {
             track.Song__c = songIds.remove(0);
