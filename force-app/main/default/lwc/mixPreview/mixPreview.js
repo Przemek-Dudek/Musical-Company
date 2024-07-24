@@ -33,12 +33,29 @@ export default class MixPreview extends LightningElement
         return this._selectedSongs.length > 20;
     }
 
+    get limitExceeded()
+    {
+        return this._selectedSongs.length - 20;
+    }
+
+    get isMixLengthExceeded()
+    {
+        return this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0) > 90;
+    }
+
     get trackCount() {
         return this._selectedSongs.length;
     }
 
     get mixLength(){
         const totalLength = this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
+        return this.formatTime(totalLength);
+    }
+
+    get mixLengthExceeded()
+    {
+        let totalLength = this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
+        totalLength -= 90;
         return this.formatTime(totalLength);
     }
 

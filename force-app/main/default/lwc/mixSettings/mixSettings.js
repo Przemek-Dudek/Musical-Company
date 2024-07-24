@@ -25,7 +25,13 @@ export default class MixSettings extends LightningElement {
     }
 
     get remainingTracks() {
-        return 20 - this.trackCount;
+        const remainingTracks = 20 - this.trackCount;
+
+        if(remainingTracks < 0) {
+            return 'TRACK LIMIT EXCEEDED';
+        }
+
+        return remainingTracks;
     }
     
     get formattedTimeCount() {
@@ -34,6 +40,11 @@ export default class MixSettings extends LightningElement {
 
     get remainingTime() {
         const remainingTime = 90 - this.timeCount;
+        
+        if(remainingTime < 0) {
+            return 'TIME LIMIT EXCEEDED';
+        }
+
         return this.formatTime(remainingTime);
     }
 
