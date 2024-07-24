@@ -2,6 +2,7 @@ import { LightningElement, wire, track, api } from 'lwc';
 
 import getGenres from '@salesforce/apex/SongController.getGenres';
 import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
+import getPages from '@salesforce/apex/SongController.getPages';
 
 export default class MusicTable extends LightningElement
 {
@@ -17,15 +18,24 @@ export default class MusicTable extends LightningElement
         { label: 'Length', fieldName: 'formattedTime' }
     ];
 
-    selectedGenre = 'all';
+    @track selectedGenre = 'all';
     @track genres;
     @track currentPage = 1;
-    @track totalPages = 1;
+    @track totalPages;
     
     @track musicList = [];
     @track displayList = [];
 
     @api selectedSongs = [];
+
+    @wire(getPages, { genre: '$selectedGenre'})
+    wiredPages({ error, data }) {
+        if (data) {
+            this.totalPages = data;
+        } else if (error) {
+            console.error(error);
+        }
+    }
 
     @wire(getGenres)
     wiredGenres({ error, data }) {
@@ -46,7 +56,6 @@ export default class MusicTable extends LightningElement
                 url: '/lightning/r/Song__c/' + song.Id + '/view'
             }));
 
-            this.totalPages = Math.ceil(this.musicList.length / 10);
             this.displayList = this.musicList.slice(0, 10);
         } else if (error) {
             console.error(error);
@@ -54,7 +63,8 @@ export default class MusicTable extends LightningElement
     }
 
     get offset() {
-        return Math.floor((this.currentPage - 1) / 10);
+        //return Math.floor((this.currentPage - 1) / 10);
+        return this.currentPage - 1;
     }
 
     get selectedRowsGet()
@@ -102,6 +112,7 @@ export default class MusicTable extends LightningElement
     }
 
     handleGenreChange(event) {
+        this.currentPage = 1;
         this.selectedGenre = event.detail.value;
     }
 

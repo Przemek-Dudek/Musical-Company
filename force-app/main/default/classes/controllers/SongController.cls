@@ -24,4 +24,11 @@ public with sharing class SongController
     {
         return SongSelector.selectByGenre(genre, offset);
     }
+
+    @AuraEnabled(cacheable=true)
+    public static Integer getPages(String genre)
+    {
+        Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get('n');
+        return numberOfRecords/Consts.PAGINATION_BATCH_SIZE + 1;
+    }
 }
