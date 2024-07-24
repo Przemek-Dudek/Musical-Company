@@ -110,23 +110,24 @@ public with sharing class MixService
 
         Set<Id> selectedSongIds = SongService.getIdsFromSongs(mix.selectedSongs);
 
-        for (Integer i = 0; i < existingTracks.size(); i++)
+        for (Integer i = 0; i < existingTracks.size();)
         {
             Track__c track = existingTracks[i];
 
-            if (!selectedSongIds.contains(track.Song__c))
+            if (selectedSongIds.contains(track.Song__c))
             {
                 existingTracks.remove(i);
                 selectedSongIds.remove(track.Song__c);
             }
+            else
+            {
+                i++;
+            }
         }
-
-        System.debug('existingTracks: ' + existingTracks);
 
         List<Track__c> tracksToDelete = new List<Track__c>();
 
-        Integer delta = mix.selectedSongs.size() - existingTracks.size();
-        System.debug('delta: ' + delta);
+        Integer delta = selectedSongIds.size() - existingTracks.size();
         if (delta > 0)
         {
             for (Integer i = 0; i < delta; i++)
@@ -143,63 +144,14 @@ public with sharing class MixService
             }
         }
 
+        List<Id> songIds = new List<Id>(selectedSongIds);
+
         for (Track__c track : existingTracks)
         {
-            track.Song__c = selectedSongIds.iterator().next();
+            track.Song__c = songIds.remove(0);
         }
 
-        System.debug(existingTracks);
-        System.debug(tracksToDelete);
-
         delete tracksToDelete;
-
         upsert existingTracks;
-
-        
-        // if(existingTracks.size() > mix.selectedSongs.size())
-        // {
-        //     List<Track__c> tracksToDelete = new List<Track__c>();
-
-        //     for (Integer i = 0; i < existingTracks.size(); i++)
-        //     {
-        //         if (i < mix.selectedSongs.size())
-        //         {
-        //             existingTracks[i].Song__c = mix.selectedSongs[i].Id;
-        //         }
-        //         else
-        //         {
-        //             tracksToDelete.add(existingTracks[i]);
-        //             existingTracks.remove(i);
-        //         }
-        //     }
-
-        //     delete tracksToDelete;
-        //     update existingTracks;
-        // }
-        // else if(existingTracks.size() < mix.selectedSongs.size())
-        // {
-        //     for (Integer i = 0; i < mix.selectedSongs.size(); i++)
-        //     {
-        //         if (i < existingTracks.size())
-        //         {
-        //             existingTracks[i].Song__c = mix.selectedSongs[i].Id;
-        //         }
-        //         else
-        //         {
-        //             existingTracks.add(new Track__c(Mix__c = mix.mixId, Song__c = mix.selectedSongs[i].Id));
-        //         }
-        //     }
-
-        //     upsert existingTracks;
-        // }
-        // else
-        // {
-        //     for (Integer i = 0; i < mix.selectedSongs.size(); i++)
-        //     {
-        //         existingTracks[i].Song__c = mix.selectedSongs[i].Id;
-        //     }
-
-        //     update existingTracks;
-        // }
     }
 }
