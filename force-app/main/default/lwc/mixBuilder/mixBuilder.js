@@ -4,6 +4,9 @@ import getMix from '@salesforce/apex/MixController.getMix';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
+const SONG_URL = '/lightning/r/Song__c/';
+const VIEW = '/view';
+
 export default class MixBuilder extends LightningElement
 {
     @api recordId;
@@ -18,7 +21,10 @@ export default class MixBuilder extends LightningElement
             data = JSON.parse(data);
             this.mixName = data.mixName;
             this.selectedContactId = data.contactId;
-            this.selectedSongs = data.selectedSongs;
+            this.selectedSongs = data.selectedSongs.map(song => ({
+                ...song,
+                url: SONG_URL + song.Id + VIEW
+            }));
         } else if (error) {
             console.error('Error loading mix', error);
         }

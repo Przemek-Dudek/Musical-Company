@@ -4,6 +4,9 @@ import getGenres from '@salesforce/apex/SongController.getGenres';
 import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
 import getPages from '@salesforce/apex/SongController.getPages';
 
+const SONG_URL = '/lightning/r/Song__c/';
+const VIEW = '/view';
+
 export default class MusicTable extends LightningElement
 {
     columns = [
@@ -53,7 +56,7 @@ export default class MusicTable extends LightningElement
             this.musicList = data.map(song => ({
                 ...song,
                 formattedTime: this.formatTime(song.Length__c),
-                url: '/lightning/r/Song__c/' + song.Id + '/view'
+                url: SONG_URL + song.Id + VIEW
             }));
 
             this.displayList = this.musicList.slice(0, 10);

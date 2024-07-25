@@ -1,0 +1,25 @@
+<template>
+    <lightning-card>
+        <c-mix-preview
+            selected-contact-id={selectedContactId}
+            mix-name={mixName}
+            selected-songs={selectedSongs}
+        ></c-mix-preview>
+        <div slot="footer" class="slds-align_absolute-center">
+            <div class="slds-p-horizontal_x-small">
+                <lightning-button
+                    variant="brand"
+                    label="Generate PDF"
+                    onclick={createPdf}
+                ></lightning-button>
+            </div>
+            <div class="slds-p-horizontal_x-small">
+                <lightning-button
+                    variant="success"
+                    label="Produce Vinyl"
+                    onclick={handleSaveMix}
+                ></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

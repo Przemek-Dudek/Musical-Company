@@ -4,7 +4,12 @@ import { LightningElement, api, track, wire } from 'lwc';
 export default class MixPreview extends LightningElement
 {
     columns = [
-        { label: 'Name', fieldName: 'Name' },
+        { 
+            label: 'Name',
+            fieldName: 'url',
+            type: 'url',
+            typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+        },
         { label: 'Artist', fieldName: 'Artist__c' },
         { label: 'Genre', fieldName: 'Genre__c' },
         { label: 'Length', fieldName: 'formattedLength' }
