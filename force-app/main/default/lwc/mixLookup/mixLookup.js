@@ -15,9 +15,11 @@ export default class MixLookup extends LightningElement {
     @api recordId;
 
     @track selectedContactId;
-    contactName;
+    @track contactName;
     @track mixName;
     @track selectedSongs = [];
+
+    @track vinylModal = false;
 
     pdfLibInitialized = false;
 
@@ -119,6 +121,11 @@ export default class MixLookup extends LightningElement {
         return genres;
     }
 
+    get trackCount()
+    {
+        return this.selectedSongs.length;
+    }
+
     get mixLength(){
         const totalLength = this.selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
         return this.formatTime(totalLength);
@@ -126,7 +133,7 @@ export default class MixLookup extends LightningElement {
 
     get mixStats()
     {
-        return 'A custom mix comprised of ' + this.selectedSongs.length + ' unique Tracks.'
+        return 'A custom mix comprised of ' + this.trackCount + ' unique Tracks.'
             + ' Total listening time: ' + this.mixLength + ' minutes.';
     }
 
@@ -219,7 +226,11 @@ export default class MixLookup extends LightningElement {
         link.click();
     }
 
-    handleVinyl() {
-        // handleVinyl method implementation here if needed
+    openVinylModal() {
+        this.vinylModal = true;
+    }
+
+    closeVinylModal() {
+        this.vinylModal = false;
     }
 }

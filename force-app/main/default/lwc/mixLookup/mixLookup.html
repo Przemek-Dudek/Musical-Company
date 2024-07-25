@@ -1,4 +1,18 @@
 <template>
+    <div lwc:if={vinylModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <c-vinyl-produce
+                contact-name={contactName}
+                selected-contact-id={selectedContactId}
+                mix-name={mixName}
+                selected-songs={selectedSongs}
+                mix-length={mixLength}
+                track-count={trackCount}
+                onclose={closeVinylModal}
+            ></c-vinyl-produce>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
     <lightning-card>
         <c-mix-preview
             selected-contact-id={selectedContactId}
@@ -17,7 +31,7 @@
                 <lightning-button
                     variant="success"
                     label="Produce Vinyl"
-                    onclick={handleSaveMix}
+                    onclick={openVinylModal}
                 ></lightning-button>
             </div>
         </div>
