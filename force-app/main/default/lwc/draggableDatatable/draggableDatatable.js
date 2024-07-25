@@ -46,13 +46,14 @@ export default class DraggableTable extends LightningElement {
         const currentIndex = DragValName;
         const newIndex = DropValName;
 
-        console.log("currentIndex: " + currentIndex);
-        console.log("newIndex: " + newIndex);
-
         Array.prototype.move = function (from, to) {
             this.splice(to, 0, this.splice(from, 1)[0]);
         };
 
         this.ElementList.move(currentIndex, newIndex);
+
+        this.dispatchEvent(new CustomEvent("reorder", {
+            detail: this.ElementList
+        }));
     }
 }

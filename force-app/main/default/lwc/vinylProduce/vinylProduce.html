@@ -18,8 +18,8 @@
             </div>
             <c-draggable-datatable
                 rows={_selectedSongs}
-                columns={columns}
                 key-field="Id"
+                onreorder={handleReorder}
             ></c-draggable-datatable>
         </div>
         <footer class="slds-modal__footer">

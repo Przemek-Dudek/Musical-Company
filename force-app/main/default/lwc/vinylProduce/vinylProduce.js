@@ -9,18 +9,6 @@ export default class VinylProduce extends LightningElement
     @api mixLength;
 
     @track _selectedSongs = [];
-    
-    columns = [
-        { 
-            label: 'Name',
-            fieldName: 'url',
-            type: 'url',
-            typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
-        },
-        { label: 'Artist', fieldName: 'Artist__c' },
-        { label: 'Genre', fieldName: 'Genre__c' },
-        { label: 'Length', fieldName: 'formattedLength' }
-    ];
 
     @api
     get selectedSongs() {
@@ -33,5 +21,9 @@ export default class VinylProduce extends LightningElement
 
     closeModal() {
         this.dispatchEvent(new CustomEvent('close'));
+    }
+
+    handleReorder(event) {
+        this._selectedSongs = event.detail;
     }
 }
