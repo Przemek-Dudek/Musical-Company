@@ -52,6 +52,14 @@ export default class VinylProduce extends LightningElement
             detail: this.selectedSongs
         }));
 
+        const toast = new ShowToastEvent({
+            title: 'Success',
+            message: 'Mix sent to production',
+            variant: 'success'
+        });
+
+        this.dispatchEvent(toast);
+
         this.closeModal();
     }
 }
