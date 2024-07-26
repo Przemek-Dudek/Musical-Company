@@ -64,6 +64,13 @@ export default class DraggableTable extends LightningElement {
 
         this.classList.remove("drag");
 
+        this.ElementList = this.ElementList.map((element, index) => {
+            return {
+                ...element,
+                Index__c: index
+            };
+        });
+
         this.dispatchEvent(new CustomEvent("reorder", {
             detail: this.ElementList
         }));
