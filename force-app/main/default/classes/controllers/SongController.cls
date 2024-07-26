@@ -31,4 +31,22 @@ public with sharing class SongController
         Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get('n');
         return numberOfRecords/Consts.PAGINATION_BATCH_SIZE + 1;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Map<String, Object>> getTrackOrder(String mixId)
+    {
+        List<Track__c> tracks = TrackSelector.selectByMixId(new Set<Id>{(Id)mixId});
+        
+        List<Map<String, Object>> songIds = new List<Map<String, Object>>();
+
+        for (Track__c track : tracks)
+        {
+            Map<String, Object> songMap = new Map<String, Object>();
+            songMap.put('Id', track.Song__c);
+            songMap.put('Index__c', track.Index__c);
+            songIds.add(songMap);
+        }
+
+        return songIds;
+    }
 }

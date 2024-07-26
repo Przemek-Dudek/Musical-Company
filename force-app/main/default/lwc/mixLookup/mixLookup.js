@@ -1,5 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import getMix from '@salesforce/apex/MixController.getMix';
+import getTrackOrder from '@salesforce/apex/SongController.getTrackOrder';
+
 import { getRecord } from 'lightning/uiRecordApi';
 
 import pdfLib from '@salesforce/resourceUrl/pdfLib';
@@ -34,6 +36,8 @@ export default class MixLookup extends LightningElement {
                 url: SONG_URL + song.Id + VIEW,
                 formattedLength: this.formatTime(song.Length__c)
             }));
+
+            this.organizeSongs();
         } else if (error) {
             console.error('Error loading mix', error);
         }
@@ -50,6 +54,34 @@ export default class MixLookup extends LightningElement {
         {
             console.error(error);
         }
+    }
+
+    @wire(getTrackOrder, { mixId: '$recordId' })
+    wiredOrder({ error, data }) {
+        if (data)
+        {
+            this.songOrder = new Map(data.map(track => [track.Id, track.Index__c]));
+            this.organizeSongs();
+        } else if (error) {
+            console.error('Error loading order', error);
+        }
+    }
+
+    organizeSongs() {
+        if (!this.songOrder || !this.selectedSongs) {
+            return;
+        }
+
+        this.selectedSongs = this.selectedSongs.map(song => ({
+            ...song,
+            Index__c: this.songOrder.get(song.Id)
+        }));
+
+        console.log('test: ', JSON.stringify(this.songOrder));
+
+        this.selectedSongs.sort((a, b) => a.Index__c - b.Index__c);
+
+        console.log('songs: ', JSON.stringify(this.selectedSongs));
     }
 
     renderedCallback() {
