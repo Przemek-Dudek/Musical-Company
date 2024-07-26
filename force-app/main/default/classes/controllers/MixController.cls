@@ -29,4 +29,29 @@ public with sharing class MixController
             MixService.updateExistingMix(mix);
         }
     }
+
+    @AuraEnabled(cacheable=false)
+    public static void handleVinylProduce(String mixJson)
+    {
+        VinylWrapper vinyl = (VinylWrapper)JSON.deserialize(mixJson, VinylWrapper.class);
+
+        Id mixId = vinyl.mixId;
+
+        Map<Id, Integer> songIds = new Map<Id, Integer>();
+        for (Track__c song : vinyl.selectedTracks)
+        {
+            songIds.put(song.Id, (Integer)song.Index__c);
+        }
+
+        List<Track__c> tracks = TrackSelector.selectByMixId(new Set<Id>{mixId});
+
+        for (Track__c track : tracks)
+        {
+            track.Index__c = songIds.get(track.Song__c);
+        }
+
+        System.debug('tracks: ' + tracks);
+
+        update tracks;
+    }
 }

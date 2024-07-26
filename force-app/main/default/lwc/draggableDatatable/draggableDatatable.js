@@ -15,34 +15,36 @@ export default class DraggableTable extends LightningElement {
         this.ElementList = value.map((element, index) => {
             return {
                 ...element,
-                index
+                Index__c: index
             };
         });
     }
 
     DragStart(event) {
+        if (this.classList !== event.target.classList) {
+            this.prevClassList = this.classList;
+        }
+
         this.dragStart = event.target.title;
         this.classList = event.target.classList;
         this.classList.add("drag");
+        this.prevClassList.remove("drag");
     }
 
     DragOver(event) {
         event.preventDefault();
-        this.classList.remove("drag");
-        return false;
-    }
-
-    Drop(event) {
-        event.stopPropagation();
 
         const DragValName = this.dragStart;
         const DropValName = event.target.title;
+
+        if (DropValName === "") {
+            return false;
+        }
 
         if (DragValName === DropValName) {
             return false;
         }
 
-        const index = DropValName;
         const currentIndex = DragValName;
         const newIndex = DropValName;
 
@@ -51,6 +53,16 @@ export default class DraggableTable extends LightningElement {
         };
 
         this.ElementList.move(currentIndex, newIndex);
+
+        this.dragStart = DropValName;
+
+        return false;
+    }
+
+    Drop(event) {
+        event.stopPropagation();
+
+        this.classList.remove("drag");
 
         this.dispatchEvent(new CustomEvent("reorder", {
             detail: this.ElementList
