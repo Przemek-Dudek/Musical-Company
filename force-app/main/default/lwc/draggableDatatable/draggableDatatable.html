@@ -1,0 +1,53 @@
+<template>
+    <div class="slds-grid slds-grid_vertical slds-p-around_medium">
+        <div class="slds-scrollable slds-grow">
+            <div class="slds-scrollable_none">
+                <table
+                    aria-multiselectable="true"
+                    class="
+                    slds-table slds-no-row-hover
+                    slds-table_bordered
+                    slds-table_fixed-layout
+                    slds-table_resizable-cols
+                    "
+                    role="grid"
+                >
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th style="padding: 8px;">Song Name</th>
+                            <th style="padding: 8px;">Artist</th>
+                            <th style="padding: 8px;">Genre</th>
+                            <th style="padding: 8px;">Length</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={ElementList} for:item="obj" for:index="index">
+                            <tr
+                                key={obj.Id}
+                                onchange={Change}
+                                draggable="true"
+                                ondrop={Drop}
+                                ondragstart={DragStart}
+                                ondragover={DragOver}
+                                title={index}
+                            >
+                                <td role="gridcell">
+                                    <div class="slds-cell-wrap" title={index}>{obj.Name}</div>
+                                </td>
+                                <td role="gridcell">
+                                    <div class="slds-cell-wrap" title={index}>{obj.Artist__c}</div>
+                                </td>
+                                <td role="gridcell">
+                                    <div class="slds-cell-wrap" title={index}>{obj.Genre__c}</div>
+                                </td>
+                                <td role="gridcell">
+                                    <div class="slds-cell-wrap" title={index}>{obj.formattedLength}</div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

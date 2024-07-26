@@ -16,4 +16,16 @@ public with sharing class SongService
 
         update songsToUpdate;
     }
+
+    public static Set<Id> getIdsFromSongs(List<Song__c> songs)
+    {
+        Set<Id> songIds = new Set<Id>();
+
+        for (Song__c song : songs)
+        {
+            songIds.add(song.Id);
+        }
+
+        return songIds;
+    }
 }

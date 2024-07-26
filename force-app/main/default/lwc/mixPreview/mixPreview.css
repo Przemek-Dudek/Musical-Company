@@ -1,0 +1,9 @@
+.custom-padding {
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
+}
+
+.datatable-container {
+    max-height: 19rem;
+    overflow-y: auto;
+}

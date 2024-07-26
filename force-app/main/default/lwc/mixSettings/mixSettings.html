@@ -1,0 +1,35 @@
+<template>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
+                <lightning-input 
+                    type="text" 
+                    value={mixName} 
+                    label="Change Mix Name"
+                    onchange={handleMixNameChange}
+                ></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
+                <lightning-record-picker
+                    value={selectedContactId}
+                    label="Customer" 
+                    placeholder="Select Customer" 
+                    object-api-name="Contact" 
+                    onchange={handleContactSelect}
+                ></lightning-record-picker>
+            </div>
+        </div>
+        <div class="custom-border-padding slds-text-align_left">
+            <div class="slds-grid slds-wrap slds-gutters slds-box slds-box_small">
+                <div class="slds-size_1-of-2">Mix name:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{mixName}</div>
+                <div class="slds-size_1-of-2">Track count:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{trackCount}</div>
+                <div class="slds-size_1-of-2">Remaining tracks:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{remainingTracks}</div>
+                <div class="slds-size_1-of-2">Mix length:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{formattedTimeCount}</div>
+                <div class="slds-size_1-of-2">Remaining length:</div>
+                <div class="slds-size_1-of-2 custom-text-padding-left">{remainingTime}</div>
+            </div>
+        </div>
+</template>
