@@ -39,14 +39,18 @@ export default class VinylProduce extends LightningElement
         };
 
         handleVinylProduce({ mixJson: JSON.stringify(mix) })
-            .then(() => {
-                this.dispatchEvent(new ShowToastEvent(
-                    { title: 'Success', message: 'Mix sent to production', variant: 'success' }));
-                this.closeModal();
-            })
-            .catch(error => {
-                console.error('Error saving mix', error);
-            });
+        .then(() => {
+            this.dispatchEvent(new ShowToastEvent(
+                { title: 'Success', message: 'Mix sent to production', variant: 'success' }));
+            this.closeModal();
+        })
+        .catch(error => {
+            console.error('Error saving mix', error);
+        });
+
+        this.dispatchEvent(new CustomEvent("reorder", {
+            detail: this.selectedSongs
+        }));
 
         this.closeModal();
     }

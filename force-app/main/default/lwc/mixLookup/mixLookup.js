@@ -76,12 +76,8 @@ export default class MixLookup extends LightningElement {
             ...song,
             Index__c: this.songOrder.get(song.Id)
         }));
-
-        console.log('test: ', JSON.stringify(this.songOrder));
-
+        
         this.selectedSongs.sort((a, b) => a.Index__c - b.Index__c);
-
-        console.log('songs: ', JSON.stringify(this.selectedSongs));
     }
 
     renderedCallback() {
@@ -264,5 +260,9 @@ export default class MixLookup extends LightningElement {
 
     closeVinylModal() {
         this.vinylModal = false;
+    }
+
+    handleReorder(event) {
+        this.selectedSongs = event.detail;
     }
 }
