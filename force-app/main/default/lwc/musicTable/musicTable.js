@@ -96,8 +96,6 @@ export default class MusicTable extends LightningElement
             this.selectedSongs = this.selectedSongs.filter(song => selectedRows.some(row => row.Id === song.Id));
         }
 
-        console.log(JSON.stringify(this.selectedSongs));
-
         const songEvent = new CustomEvent('songsselected', { detail: this.selectedSongs });
         this.dispatchEvent(songEvent);
     }

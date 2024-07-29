@@ -137,7 +137,7 @@ public with sharing class MixService
                     i++;
                 }
             }
-    
+
             List<Track__c> tracksToDelete = new List<Track__c>();
     
             Integer delta = selectedSongIds.size() - existingTracks.size();
@@ -150,10 +150,11 @@ public with sharing class MixService
             }
             else if (delta < 0)
             {
-                for (Integer i = 0; i < -delta; i++)
+                for (; delta < 0; delta++)
                 {
-                    tracksToDelete.add(existingTracks[i]);
-                    existingTracks.remove(i);
+                    System.debug('delta: ' + delta);
+                    tracksToDelete.add(existingTracks[0]);
+                    existingTracks.remove(0);
                 }
             }
     
