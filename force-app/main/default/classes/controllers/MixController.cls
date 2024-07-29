@@ -50,6 +50,8 @@ public with sharing class MixController
             track.Index__c = songIds.get(track.Song__c);
         }
 
+        System.debug('tracks: ' + tracks);
+
         update tracks;
     }
 }
