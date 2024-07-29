@@ -58,6 +58,8 @@ export default class VinylProduce extends LightningElement
             variant: 'success'
         });
 
+        this.dispatchEvent(new CustomEvent("produce"));
+
         this.dispatchEvent(toast);
 
         this.closeModal();

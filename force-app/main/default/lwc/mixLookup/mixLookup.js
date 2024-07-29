@@ -1,6 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import getMix from '@salesforce/apex/MixController.getMix';
 import getTrackOrder from '@salesforce/apex/SongController.getTrackOrder';
+import sendEmailWithPdf from '@salesforce/apex/EmailManager.sendEmailWithPdf';
 
 import { getRecord } from 'lightning/uiRecordApi';
 
@@ -165,84 +166,116 @@ export default class MixLookup extends LightningElement {
             + ' Total listening time: ' + this.mixLength + ' minutes.';
     }
 
-    async createPdf() {
+    async downloadPdf() {
         try {
-            const existingPdfBytes = await fetch(mixTemplate).then(res => res.arrayBuffer())
-            const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
-            const helveticaBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
-            const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
-      
-            const page = pdfDoc.getPages()[0];
-            const { width, height } = page.getSize();
-            const titlefontSize = 75;
-            const authorfontSize = 22;
-            const songsfontSize = 12;
-            const statsfontSize = 13;
-            const songHeight = height - 325;
-
-            const white = PDFLib.rgb(1, 1, 1);
-
-            page.drawText(this.mixName, {
-                x: 60,
-                y: height - 120,
-                size: titlefontSize,
-                font: helveticaBold,
-                color: white,
-            });
-
-            page.drawText(this.customerName, {
-                x: 70,
-                y: height - 155,
-                size: authorfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            page.drawText(this.mixStats, {
-                x: 60,
-                y: height - 245,
-                size: statsfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            page.drawText(this.songTitles, {
-                x: 70,
-                y: songHeight,
-                size: songsfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            page.drawText(this.songArtists, {
-                x: 230,
-                y: songHeight,
-                size: songsfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            page.drawText(this.songLengths, {
-                x: 400,
-                y: songHeight,
-                size: songsfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            page.drawText(this.songGenres, {
-                x: 440,
-                y: songHeight,
-                size: songsfontSize,
-                font: helvetica,
-                color: white,
-            });
-
-            const pdfBytes = await pdfDoc.save();
+            const pdfBytes = await this.createPdf();
             this.saveByteArray(this.mixName, pdfBytes);
         } catch (error) {
-            console.error('Error creating PDF', error);
+            console.error('Error creating PDF:', error.message);
+            console.error('Stack trace:', error.stack);
+            console.error('Error details:', error);
         }
+    }
+    
+
+    async sendPdf() {
+        try {
+            const pdfBytes = await this.createPdf();
+            const pdfBase64 = this.arrayBufferToBase64(pdfBytes);
+
+            await sendEmailWithPdf({ contactId: this.selectedContactId, pdfBase64: pdfBase64, fileName: this.mixName });
+        } catch (error) {
+            console.error('Error creating PDF to send:', error.message);
+            console.error('Stack trace:', error.stack);
+            console.error('Error details:', error);
+        }
+    }
+
+    arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+
+    async createPdf()
+    {
+        const existingPdfBytes = await fetch(mixTemplate).then(res => res.arrayBuffer())
+        const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+
+        const helveticaBold = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
+        const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+    
+        const page = pdfDoc.getPages()[0];
+        const { width, height } = page.getSize();
+        const titlefontSize = 75;
+        const authorfontSize = 22;
+        const songsfontSize = 12;
+        const statsfontSize = 13;
+        const songHeight = height - 325;
+
+        const white = PDFLib.rgb(1, 1, 1);
+
+        page.drawText(this.mixName, {
+            x: 60,
+            y: height - 120,
+            size: titlefontSize,
+            font: helveticaBold,
+            color: white,
+        });
+
+        page.drawText(this.customerName, {
+            x: 70,
+            y: height - 155,
+            size: authorfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        page.drawText(this.mixStats, {
+            x: 60,
+            y: height - 245,
+            size: statsfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        page.drawText(this.songTitles, {
+            x: 70,
+            y: songHeight,
+            size: songsfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        page.drawText(this.songArtists, {
+            x: 230,
+            y: songHeight,
+            size: songsfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        page.drawText(this.songLengths, {
+            x: 400,
+            y: songHeight,
+            size: songsfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        page.drawText(this.songGenres, {
+            x: 440,
+            y: songHeight,
+            size: songsfontSize,
+            font: helvetica,
+            color: white,
+        });
+
+        return await pdfDoc.save();
     }
 
     saveByteArray(pdfName, byte) {

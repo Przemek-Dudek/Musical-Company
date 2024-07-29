@@ -11,6 +11,7 @@
                 track-count={trackCount}
                 onclose={closeVinylModal}
                 onreorder={handleReorder}
+                onproduce={sendPdf}
             ></c-vinyl-produce>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
@@ -26,7 +27,7 @@
                 <lightning-button
                     variant="brand"
                     label="Generate PDF"
-                    onclick={createPdf}
+                    onclick={downloadPdf}
                 ></lightning-button>
             </div>
             <div class="slds-p-horizontal_x-small">
