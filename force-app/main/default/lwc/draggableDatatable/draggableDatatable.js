@@ -26,6 +26,7 @@ export default class DraggableTable extends LightningElement {
         }
 
         this.dragStart = event.target.title;
+
         this.classList = event.target.classList;
         this.classList.add("drag");
         this.prevClassList.remove("drag");
@@ -33,6 +34,8 @@ export default class DraggableTable extends LightningElement {
 
     DragOver(event) {
         event.preventDefault();
+
+        this.classList.add("drag-background");
 
         const DragValName = this.dragStart;
         const DropValName = event.target.title;
@@ -47,6 +50,11 @@ export default class DraggableTable extends LightningElement {
 
         const currentIndex = DragValName;
         const newIndex = DropValName;
+
+        if (this.copiedElement) {
+            this.ElementList.splice(this.copiedElement, 1);
+            this.copiedElement = null;
+        }
 
         Array.prototype.move = function (from, to) {
             this.splice(to, 0, this.splice(from, 1)[0]);
@@ -63,6 +71,7 @@ export default class DraggableTable extends LightningElement {
         event.stopPropagation();
 
         this.classList.remove("drag");
+        this.classList.remove("drag-background");
 
         this.ElementList = this.ElementList.map((element, index) => {
             return {

@@ -1,5 +1,22 @@
 .drag {
     background-color: #45c65a;
-    opacity: 0.75;
+    opacity: 1;
 }
+
+.drag-background {
+    background-color: #45c65a;
+    color: #45c65a;
+    opacity: 0.15;
+}
+
+/* .drag {
+    background-color: #45c65a;
+    opacity: 0;
+}
+
+.drag-background {
+    background-color: #45c65a;
+    color: black;
+    opacity: 1;
+} */
 
