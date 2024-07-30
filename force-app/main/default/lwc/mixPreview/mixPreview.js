@@ -81,6 +81,7 @@ export default class MixPreview extends LightningElement
         else if (error)
         {
             console.error(error);
+            this.dispatchToastError('Error loading contact preview', error.message);
         }
     }
 }

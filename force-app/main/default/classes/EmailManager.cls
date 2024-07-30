@@ -22,14 +22,16 @@ public with sharing class EmailManager
         return mail;
     }
 
-    @AuraEnabled
-    public static void sendEmailWithPdf(String contactId, String pdfBase64, String fileName)
+    public static void sendEmailWithPdf(List<Contact> contacts, String pdfBase64, String fileName)
     {
-        Contact contact = [SELECT Email FROM Contact WHERE Id = :contactId LIMIT 1];
-
-        if (contact.Email == null)
+        System.debug('Sending email with PDF');
+        List<String> recipients = new List<String>();
+        for (Contact contact : contacts)
         {
-            throw new AuraHandledException('The selected contact does not have an email address.');
+            if (contact.Email != null)
+            {
+                recipients.add(contact.Email);
+            }
         }
 
         Messaging.EmailFileAttachment attachment = new Messaging.EmailFileAttachment();
@@ -37,6 +39,8 @@ public with sharing class EmailManager
         attachment.setBody(EncodingUtil.base64Decode(pdfBase64));
         attachment.setContentType('application/pdf');
 
-        sendMessage(new List<String> { contact.Email }, 'Your Vinyl Mix', 'Please find the attached PDF file for detailed mix report', attachment);
+        System.debug('Sending email to: ' + recipients);
+
+        sendMessage(recipients, 'Your Vinyl Mix', 'Please find the attached PDF file for detailed mix report', attachment);
     }
 }

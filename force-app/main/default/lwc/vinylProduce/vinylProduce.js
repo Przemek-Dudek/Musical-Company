@@ -1,6 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
 
-import handleVinylProduce from '@salesforce/apex/MixController.handleVinylProduce';
+import handleVinylProduce from '@salesforce/apex/MixBuilderController.handleVinylProduce';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 

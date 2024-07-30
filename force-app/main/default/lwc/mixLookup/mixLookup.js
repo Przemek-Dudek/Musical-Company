@@ -1,7 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
-import getMix from '@salesforce/apex/MixController.getMix';
-import getTrackOrder from '@salesforce/apex/SongController.getTrackOrder';
-import sendEmailWithPdf from '@salesforce/apex/EmailManager.sendEmailWithPdf';
+import getMix from '@salesforce/apex/MixBuilderController.getMix';
+import getTrackOrder from '@salesforce/apex/MixBuilderController.getTrackOrder';
+import sendEmailWithPdf from '@salesforce/apex/MixBuilderController.sendEmailWithPdf';
 
 import { getRecord } from 'lightning/uiRecordApi';
 
@@ -9,6 +9,7 @@ import pdfLib from '@salesforce/resourceUrl/pdfLib';
 import mixTemplate from '@salesforce/resourceUrl/mixPDFTemplate';
 
 import { loadScript } from 'lightning/platformResourceLoader';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 const SONG_URL = '/lightning/r/Song__c/';
 const VIEW = '/view';
@@ -41,6 +42,7 @@ export default class MixLookup extends LightningElement {
             this.organizeSongs();
         } else if (error) {
             console.error('Error loading mix', error);
+            this.dispatchToastError('Error loading mix', error.message);
         }
     }
 
@@ -54,6 +56,7 @@ export default class MixLookup extends LightningElement {
         else if (error)
         {
             console.error(error);
+            this.dispatchToastError('Error loading contact', error.message);
         }
     }
 
@@ -65,6 +68,7 @@ export default class MixLookup extends LightningElement {
             this.organizeSongs();
         } else if (error) {
             console.error('Error loading order', error);
+            this.dispatchToastError('Error loading order', error.message);
         }
     }
 
@@ -174,6 +178,7 @@ export default class MixLookup extends LightningElement {
             console.error('Error creating PDF:', error.message);
             console.error('Stack trace:', error.stack);
             console.error('Error details:', error);
+            this.dispatchToastError('Error while creating a pdf', error.message);
         }
     }
     
@@ -188,6 +193,7 @@ export default class MixLookup extends LightningElement {
             console.error('Error creating PDF to send:', error.message);
             console.error('Stack trace:', error.stack);
             console.error('Error details:', error);
+            this.dispatchToastError('Error while creating a pdf', error.message);
         }
     }
 
@@ -297,5 +303,15 @@ export default class MixLookup extends LightningElement {
 
     handleReorder(event) {
         this.selectedSongs = event.detail;
+    }
+
+    dispatchToastError(title, message) {
+        const toast = new ShowToastEvent({
+            title: title,
+            message: message,
+            variant: 'error'
+        });
+
+        this.dispatchEvent(toast);
     }
 }

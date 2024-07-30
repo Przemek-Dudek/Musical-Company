@@ -1,6 +1,6 @@
 import { api, LightningElement, wire, track } from 'lwc';
-import handleMixUpsert from '@salesforce/apex/MixController.handleMixUpsert';
-import getMix from '@salesforce/apex/MixController.getMix';
+import handleMixUpsert from '@salesforce/apex/MixBuilderController.handleMixUpsert';
+import getMix from '@salesforce/apex/MixBuilderController.getMix';
 
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
@@ -27,6 +27,7 @@ export default class MixBuilder extends LightningElement
             }));
         } else if (error) {
             console.error('Error loading mix', error);
+            this.dispatchToastError('Error loading mix', error.message);
         }
 
         if(!this.mixName)

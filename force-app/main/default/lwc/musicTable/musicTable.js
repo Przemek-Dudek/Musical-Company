@@ -1,8 +1,8 @@
 import { LightningElement, wire, track, api } from 'lwc';
 
-import getGenres from '@salesforce/apex/SongController.getGenres';
-import getSongsByGenre from '@salesforce/apex/SongController.getSongsByGenre';
-import getPages from '@salesforce/apex/SongController.getPages';
+import getGenres from '@salesforce/apex/MixBuilderController.getGenres';
+import getSongsByGenre from '@salesforce/apex/MixBuilderController.getSongsByGenre';
+import getPages from '@salesforce/apex/MixBuilderController.getPages';
 
 const SONG_URL = '/lightning/r/Song__c/';
 const VIEW = '/view';
