@@ -10,8 +10,16 @@ public with sharing class MixService
         {
             Mix__c mix = new Mix__c(Id = mixId);
 
-            
             Map<String, Integer> genreCount = mixGenreCount.get(mixId);
+
+            if(genreCount == null)
+            {
+                mix.Primary_Genre__c = null;
+                mix.Secondary_Genre__c = null;
+
+                mixesToUpdate.add(mix);
+                continue;
+            }
 
             String primaryGenre = null;
             String secondaryGenre = null;
@@ -31,7 +39,6 @@ public with sharing class MixService
 
             mix.Primary_Genre__c = primaryGenre;
             mix.Secondary_Genre__c = secondaryGenre;
-            
 
             mixesToUpdate.add(mix);
         }
@@ -47,10 +54,10 @@ public with sharing class MixService
 
         for (AggregateResult r : queryRes)
         {
-            Id mixId = (Id)r.get('mix');
+            Id mixId = (Id)r.get(Consts.FIELD_MIX);
 
-            String genre = (String)r.get('genre');
-            Integer count = (Integer)r.get('recordCount');
+            String genre = (String)r.get(Consts.FIELD_GENRE);
+            Integer count = (Integer)r.get(Consts.AGGREGATE_COUNT);
 
             if (!mixGenreCount.containsKey(mixId))
             {
@@ -69,14 +76,13 @@ public with sharing class MixService
     {
         List<AggregateResult> queryRes = TrackSelector.getFullMixes(mixIds);
         
-        Set<Id> fullMixesIds = new Set<Id>();
-
-        for (AggregateResult res : queryRes)
+        Set<Id> fullMixIds = new Set<Id>();
+        for (AggregateResult r : queryRes)
         {
-            fullMixesIds.add((Id)res.get('Mix__c'));
+            fullMixIds.add((Id)r.get(Consts.FIELD_MIX));
         }
 
-        return fullMixesIds;
+        return fullMixIds;
     }
 
     public static void createNewMix(MixWrapper mix)
@@ -121,7 +127,7 @@ public with sharing class MixService
             updateMixData(mix);
     
             List<Track__c> existingTracks = TrackSelector.selectByMixId(new Set<Id>{mix.mixId});
-            Set<Id> selectedSongIds = SongService.getIdsFromSongs(mix.selectedSongs);
+            Set<Id> selectedSongIds = Utils.getIdFieldValue(mix.selectedSongs, Consts.FIELD_ID);
     
             for (Integer i = 0; i < existingTracks.size();)
             {
@@ -143,7 +149,7 @@ public with sharing class MixService
             Integer delta = selectedSongIds.size() - existingTracks.size();
             if (delta > 0)
             {
-                for (Integer i = 0; i < delta; i++)
+                for (; delta > 0; delta--)
                 {
                     existingTracks.add(new Track__c(Mix__c = mix.mixId));
                 }
@@ -152,7 +158,6 @@ public with sharing class MixService
             {
                 for (; delta < 0; delta++)
                 {
-                    System.debug('delta: ' + delta);
                     tracksToDelete.add(existingTracks[0]);
                     existingTracks.remove(0);
                 }
@@ -174,5 +179,4 @@ public with sharing class MixService
             throw e;
         }
     }
-    
 }

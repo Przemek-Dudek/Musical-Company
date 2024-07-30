@@ -60,12 +60,7 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
 
     private static Set<Id> getAffectedMixes(List<Song__c> songs)
     {
-        Set<Id> songIds = new Set<Id>();
-
-        for (Song__c song : songs)
-        {
-            songIds.add(song.Id);
-        }
+        Set<Id> songIds = Utils.getIdFieldValue(songs, Consts.FIELD_ID);
 
         return TrackService.getMixIdsFromTracks(TrackService.getTrackIdsFromSongs(songIds));
     }

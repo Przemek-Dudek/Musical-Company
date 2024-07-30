@@ -2,69 +2,53 @@ public with sharing class TrackService
 {
     public static void processAddedTracks(List<Track__c> newTracks)
     {
-        Set<Id> mixIds = new Set<Id>();
-        for (Track__c track : newTracks)
-        {
-            mixIds.add(track.Mix__c);
-        }
+        Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
 
-        Set<Id> fullMixesIds = MixService.getFullMixIds(mixIds);
-
-        if (fullMixesIds.isEmpty())
-        {
-            return;
-        }
+        Map<Id, Integer> trackCountByMixId = getTrackCountByMixIds(affectedMixIds);
 
         for(Track__c track : newTracks)
         {
-            if (fullMixesIds.contains(track.Mix__c))
+            if (!trackCountByMixId.containsKey(track.Mix__c))
+            {
+                trackCountByMixId.put(track.Mix__c, 0);
+            }
+
+            Integer newCount = trackCountByMixId.get(track.Mix__c) + 1;
+
+            if (newCount > Consts.MAX_TRACKS_PER_MIX)
             {
                 track.addError('Max amount of tracks per mix reached');
             }
+
+            trackCountByMixId.put(track.Mix__c, newCount);
         }
+    }
+
+    public static Map<Id, Integer> getTrackCountByMixIds(Set<Id> mixIds)
+    {
+        List<AggregateResult> results = TrackSelector.getTrackCountByMixIds(mixIds);
+
+        Map<Id, Integer> trackCountByMixId = new Map<Id, Integer>();
+        for (AggregateResult result : results)
+        {
+            trackCountByMixId.put((Id)result.get(Consts.FIELD_MIX), (Integer)result.get(Consts.AGGREGATE_COUNT));
+        }
+
+        return trackCountByMixId;
     }
 
     public static Set<Id> getMixIdsFromTracks(Set<Id> trackIds)
     {
         List<Track__c> tracks = TrackSelector.selectByIds(trackIds);
 
-        Set<Id> mixIds = new Set<Id>();
-        for (Track__c track : tracks)
-        {
-            if(track.Mix__c != null)
-            {
-                mixIds.add(track.Mix__c);
-            }
-        }
-
-        return mixIds;
+        return Utils.getIdFieldValue(tracks, Consts.FIELD_MIX);
     }
 
     public static Set<Id> getTrackIdsFromSongs(Set<Id> songIds)
     {
         List<Track__c> tracks = TrackSelector.getTracksBySongIds(songIds);
 
-        Set<Id> trackIds = new Set<Id>();
-        for (Track__c track : tracks)
-        {
-            trackIds.add(track.Id);
-        }
-
-        return trackIds;
-    }
-
-    public static Set<Id> getSongIdsFromTracks(List<Track__c> tracks)
-    {
-        Set<Id> songIds = new Set<Id>();
-        for (Track__c track : tracks)
-        {
-            if(track.Song__c != null)
-            {
-                songIds.add(track.Song__c);
-            }
-        }
-
-        return songIds;
+        return Utils.getIdFieldValue(tracks, Consts.FIELD_ID);
     }
 
     public static void createTracks(Id mixId, List<Song__c> songs)

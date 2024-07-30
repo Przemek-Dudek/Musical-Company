@@ -32,11 +32,11 @@ public with sharing class SongSelector extends fflib_SObjectSelector
 
         fflib_QueryFactory queryFactory = selector.newQueryFactory();
 
-        if(genre != 'all')
+        if(genre != Consts.GENRE_ALL)
         {
             queryFactory.setCondition('Genre__c = :genre');
         }
-        queryFactory.addOrdering('Name', fflib_QueryFactory.SortOrder.ASCENDING);
+        queryFactory.addOrdering(Consts.FIELD_NAME, fflib_QueryFactory.SortOrder.ASCENDING);
         queryFactory.setLimit(Consts.PAGINATION_BATCH_SIZE);
         queryFactory.setOffset(offset*Consts.PAGINATION_BATCH_SIZE);
 
@@ -47,7 +47,7 @@ public with sharing class SongSelector extends fflib_SObjectSelector
     {
         String query = 'SELECT COUNT(Id) n FROM Song__c';
 
-        if (genre != 'all') {
+        if (genre != Consts.GENRE_ALL) {
             query += ' WHERE Genre__c = :genre';
         }
 

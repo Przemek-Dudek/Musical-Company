@@ -5,12 +5,13 @@ public with sharing class MixBuilderController
     {
         Mix__c selectedMix = MixSelector.selectById(new Set<Id>{(Id)mixId})[0];
 
-        Set<Id> selectedSongIds = TrackService.getSongIdsFromTracks(
-            TrackSelector.selectByMixId(new Set<Id>{(Id)mixId}));
+        Set<Id> selectedSongIds = Utils.getIdFieldValue(
+            TrackSelector.selectByMixId(new Set<Id>{(Id)mixId}), Consts.FIELD_SONG);
 
         MixWrapper wrapper = new MixWrapper(
             selectedMix.Id, selectedMix.Name, selectedMix.Customer__c,
-            SongSelector.selectById(selectedSongIds));
+            SongSelector.selectById(selectedSongIds)
+        );
 
         return JSON.serialize(wrapper);
     }
@@ -95,8 +96,8 @@ public with sharing class MixBuilderController
         for (Track__c track : tracks)
         {
             Map<String, Object> songMap = new Map<String, Object>();
-            songMap.put('Id', track.Song__c);
-            songMap.put('Index__c', track.Index__c);
+            songMap.put(Consts.FIELD_ID, track.Song__c);
+            songMap.put(Consts.FIELD_INDEX, track.Index__c);
             songIds.add(songMap);
         }
 
@@ -107,8 +108,6 @@ public with sharing class MixBuilderController
     public static void sendEmailWithPdf(String contactId, String pdfBase64, String fileName)
     {
         List<Contact> contacts = ContactSelector.selectById(new Set<Id>{(Id)contactId});
-
-        System.debug('Sending email with PDF to: ' + contacts[0].Email);
         
         EmailManager.sendEmailWithPdf(contacts, pdfBase64, fileName);
     }

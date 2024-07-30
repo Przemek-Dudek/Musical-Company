@@ -12,20 +12,26 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
 
     public static List<AggregateResult> countTracksOnSongs(Set<Id> songIds)
     {
-        return [
-            SELECT Song__c songId, COUNT(Id) trackCount
-            FROM Track__c
-            WHERE Song__c IN :songIds
-            GROUP BY Song__c];
+        String query = 'SELECT Song__c ' + Consts.FIELD_SONG + ', COUNT(Id) ' + Consts.AGGREGATE_COUNT + ' FROM Track__c WHERE Song__c IN :songIds GROUP BY Song__c';
+        
+        return Database.query(query);
     }
 
     public static List<AggregateResult> getGenresByMixes(Set<Id> mixIds)
     {
-        return [
-            SELECT COUNT(Id) recordCount, Song__r.Genre__c genre, Mix__c mix
-            FROM Track__c
-            WHERE Mix__c IN :mixIds
-            GROUP BY Song__r.Genre__c, Mix__c];
+        String query = 'SELECT COUNT(Id) ' + Consts.AGGREGATE_COUNT + ', Song__r.Genre__c ' + Consts.FIELD_GENRE + ', Mix__c ' + Consts.FIELD_MIX
+            + ' FROM Track__c'
+            + ' WHERE Mix__c IN :mixIds'
+            + ' GROUP BY Song__r.Genre__c, Mix__c';
+
+        return Database.query(query);
+    }
+
+    public static List<AggregateResult> getTrackCountByMixIds(Set<Id> mixIds)
+    {
+        String query = 'SELECT Mix__c, COUNT(Id) ' + Consts.AGGREGATE_COUNT + ' FROM Track__c WHERE Mix__c IN :mixIds GROUP BY Mix__c';
+
+        return Database.query(query);
     }
 
     public static List<AggregateResult> getFullMixes(Set<Id> mixIds)
@@ -34,7 +40,7 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
             SELECT Mix__c
             FROM Track__c 
             GROUP BY Mix__c
-            HAVING COUNT(Id) > :Consts.MAX_TRACKS_PER_MIX
+            HAVING COUNT(Id) >= :Consts.MAX_TRACKS_PER_MIX
             AND Mix__c IN :mixIds];
     }
 
