@@ -39,18 +39,18 @@ public with sharing class MixBuilderController
         Id mixId = vinyl.mixId;
 
         Map<Id, Integer> songIds = new Map<Id, Integer>();
-        for (Track__c song : vinyl.selectedTracks)
+        for (VinylWrapper.SongIndex song : vinyl.selectedTracks)
         {
-            songIds.put(song.Id, (Integer)song.Index__c);
+            songIds.put(song.songId, (Integer)song.songIndex);
         }
 
         List<Track__c> tracks = TrackSelector.selectByMixId(new Set<Id>{mixId});
-
+        
         for (Track__c track : tracks)
         {
             track.Index__c = songIds.get(track.Song__c);
         }
-
+        
         update tracks;
     }
 
@@ -83,6 +83,12 @@ public with sharing class MixBuilderController
     public static Integer getPages(String genre)
     {
         Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get('n');
+
+        if (Math.mod(numberOfRecords, Consts.PAGINATION_BATCH_SIZE) == 0 && numberOfRecords > 0)
+        {
+            return numberOfRecords/Consts.PAGINATION_BATCH_SIZE;
+        }
+
         return numberOfRecords/Consts.PAGINATION_BATCH_SIZE + 1;
     }
 

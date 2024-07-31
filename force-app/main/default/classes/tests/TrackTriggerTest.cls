@@ -17,6 +17,7 @@ public with sharing class TrackTriggerTest
             Track__c track = new Track__c();
             track.Mix__c = mix.Id;
             track.Song__c = null;
+            track.Index__c = i;
 
             tracks.add(track);
         }

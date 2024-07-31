@@ -33,9 +33,16 @@ export default class VinylProduce extends LightningElement
     }
 
     handleProduce() {
+        const songIndexes = this._selectedSongs.map(song => {
+            return {
+                songId: song.Id,
+                songIndex: song.Index__c
+            };
+        });
+
         const mix = {
             mixId: this.mixId,
-            selectedTracks: this._selectedSongs.map(song => song)
+            selectedTracks: songIndexes
         };
 
         handleVinylProduce({ mixJson: JSON.stringify(mix) })

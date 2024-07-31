@@ -4,37 +4,29 @@ public with sharing class TrackService
     {
         Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
 
-        Map<Id, Integer> trackCountByMixId = getTrackCountByMixIds(affectedMixIds);
+        List<Track__c> selectedTracks = TrackSelector.selectByMixId(affectedMixIds);
+        
+        Map<Id, List<Track__c>> tracksByMixId = Utils.getParentIdToChildrenMapping(selectedTracks, Consts.FIELD_MIX);
 
         for(Track__c track : newTracks)
         {
-            if (!trackCountByMixId.containsKey(track.Mix__c))
+            if (!tracksByMixId.containsKey(track.Mix__c))
             {
-                trackCountByMixId.put(track.Mix__c, 0);
+                tracksByMixId.put(track.Mix__c, new List<Track__c>());
             }
 
-            Integer newCount = trackCountByMixId.get(track.Mix__c) + 1;
+            Set<Track__c> tracks = new Set<Track__c>(tracksByMixId.get(track.Mix__c));
+            tracks.add(track);
 
-            if (newCount > Consts.MAX_TRACKS_PER_MIX)
+            if(tracks.size() > Consts.MAX_TRACKS_PER_MIX)
             {
-                track.addError('Max amount of tracks per mix reached');
+                track.addError('Cannot add more than ' + Consts.MAX_TRACKS_PER_MIX + ' tracks to a mix');
             }
 
-            trackCountByMixId.put(track.Mix__c, newCount);
+            System.debug('tracks: ' + tracks.size());
+
+            tracksByMixId.put(track.Mix__c, new List<Track__c>(tracks));
         }
-    }
-
-    public static Map<Id, Integer> getTrackCountByMixIds(Set<Id> mixIds)
-    {
-        List<AggregateResult> results = TrackSelector.getTrackCountByMixIds(mixIds);
-
-        Map<Id, Integer> trackCountByMixId = new Map<Id, Integer>();
-        for (AggregateResult result : results)
-        {
-            trackCountByMixId.put((Id)result.get(Consts.FIELD_MIX), (Integer)result.get(Consts.AGGREGATE_COUNT));
-        }
-
-        return trackCountByMixId;
     }
 
     public static Set<Id> getMixIdsFromTracks(Set<Id> trackIds)

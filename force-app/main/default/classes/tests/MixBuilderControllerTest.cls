@@ -69,4 +69,147 @@ private class MixBuilderControllerTest
 
         System.assertEquals(5, updatedTracks.size());
     }
+
+    @isTest
+    static void updateExistingMixMoreSongs()
+    {
+        Mix__c mix = [SELECT Id, Name FROM Mix__c LIMIT 1];
+        List<Track__c> tracks = [SELECT Id, Song__c FROM Track__c WHERE Mix__c = :mix.Id];
+
+        MixWrapper wrapper = new MixWrapper(
+            mix.Id, mix.Name, null,
+            [SELECT Id, Name FROM Song__c LIMIT 15]
+        );
+
+        Test.startTest();
+        MixBuilderController.handleMixUpsert(JSON.serialize(wrapper));
+        Test.stopTest();
+
+        List<Track__c> updatedTracks = [SELECT Id, Index__c FROM Track__c WHERE Mix__c = :mix.Id];
+
+        System.assertEquals(15, updatedTracks.size());
+    }
+
+    @isTest
+    static void produceVinylAndEmail()
+    {
+        Mix__c mix = [SELECT Id, Name FROM Mix__c LIMIT 1];
+        List<Track__c> tracks = [SELECT Id, Song__c, Index__c FROM Track__c WHERE Mix__c = :mix.Id];
+
+        List<VinylWrapper.SongIndex> selectedTracks = new List<VinylWrapper.SongIndex>();
+
+        for(Integer i = 0; i < tracks.size(); i++)
+        {
+            selectedTracks.add(new VinylWrapper.SongIndex(tracks[i].Song__c, i));
+        }
+
+        VinylWrapper wrapper = new VinylWrapper(
+            mix.Id, mix.Name, null,
+            selectedTracks
+        );
+
+        Test.startTest();
+        MixBuilderController.handleVinylProduce(JSON.serialize(wrapper));
+        Test.stopTest();
+
+        tracks = [SELECT Id, Song__c, Index__c FROM Track__c WHERE Mix__c = :mix.Id];
+        for(Track__c track : tracks)
+        {
+            System.assertNotEquals(null, track.Index__c);
+        }
+    }
+
+    @isTest
+    static void testSendEmailPdf()
+    {
+        insert new Contact(FirstName = 'Test', LastName = 'Contact', Email = 'test@email.com');
+
+        Contact contact = [SELECT Id FROM Contact LIMIT 1];
+
+        Test.startTest();
+        MixBuilderController.sendEmailWithPdf(contact.Id, TestHelper.PDF_BASE64, 'Test');
+        Test.stopTest();
+
+        List<EmailMessage> emails = [SELECT Id FROM EmailMessage];
+        System.assertEquals(1, emails.size());
+    }
+
+    @isTest
+    static void getSongsByIds()
+    {
+        List<Song__c> songs = [SELECT Id FROM Song__c LIMIT 50];
+
+        Set<Id> songIds = Utils.getIdFieldValue(songs, 'Id');
+
+        Test.startTest();
+        List<Song__c> selectedSongs = MixBuilderController.getSongsByIds(new List<Id>(songIds));
+        Test.stopTest();
+
+        System.assertEquals(50, selectedSongs.size());
+    }
+
+    @isTest
+    static void getSongsByGenre()
+    {
+        Test.startTest();
+        List<Song__c> songs = MixBuilderController.getSongsByGenre(TestHelper.GENRE_ROCK, 0);
+        Test.stopTest();
+
+        if(Consts.PAGINATION_BATCH_SIZE < 100)
+        {
+            System.assertEquals(Consts.PAGINATION_BATCH_SIZE, songs.size());
+        }
+        else
+        {
+            System.assertEquals(100, songs.size());
+        }
+
+        for(Song__c song : songs)
+        {
+            System.assertEquals(TestHelper.GENRE_ROCK, song.Genre__c);
+        }
+    }
+
+    @isTest
+    static void getGenres()
+    {
+        Test.startTest();
+        List<String> res = MixBuilderController.getGenres();
+        Test.stopTest();
+
+        List<String> genres = new List<String>();
+        List<Schema.PicklistEntry> picklistEntries = Song__c.Genre__c.getDescribe().getPicklistValues();
+        
+        for (Schema.PicklistEntry entry : picklistEntries) {
+            genres.add(entry.getLabel());
+        }
+
+        System.assertEquals(genres, res);
+    }
+
+    @isTest
+    static void getTrackOrder()
+    {
+        Mix__c mix = [SELECT Id FROM Mix__c LIMIT 1];
+
+        Test.startTest();
+        List<Map<String, Object>> trackOrder = MixBuilderController.getTrackOrder(mix.Id);
+        Test.stopTest();
+
+        for(Map<String, Object> track : trackOrder)
+        {
+            System.assertNotEquals(null, track.get(Consts.FIELD_ID));
+            System.assertEquals(null, track.get(Consts.FIELD_INDEX));
+        }
+    }
+
+    @isTest
+    static void getPages()
+    {
+        Test.startTest();
+        Integer pages = MixBuilderController.getPages(TestHelper.GENRE_ROCK);
+        Test.stopTest();
+
+        System.assertEquals(5, pages);
+    }
 }

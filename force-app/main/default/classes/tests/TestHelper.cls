@@ -3,6 +3,7 @@ public class TestHelper
 {
     public static final String GENRE_ROCK = 'Rock';
     public static final String GENRE_POP = 'Pop';
+    public static final String PDF_BASE64 = 'JVBERi0xLjUKJYCBgoMKMSAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvRmlyc3QgMTQxL04gMjAvTGVuZ3==';
 
     @isTest
     public static void insertTestMixes()
