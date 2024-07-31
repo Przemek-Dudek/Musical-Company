@@ -79,7 +79,6 @@ public with sharing class TrackTriggerTest
     static void testUndeleteTracks()
     {
         List<Track__c> tracks = [SELECT Id FROM Track__c];
-
         delete tracks;
 
         Test.startTest();

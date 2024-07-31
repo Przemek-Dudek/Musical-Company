@@ -1,3 +1,4 @@
+//UNUSED, JUST AN EXAMPLE
 public with sharing class MixSharing
 {
     public static boolean shareRecord(Id recordId, Id userId)

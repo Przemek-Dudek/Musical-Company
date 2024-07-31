@@ -3,9 +3,7 @@ public with sharing class TrackService
     public static void processAddedTracks(List<Track__c> newTracks)
     {
         Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
-
         List<Track__c> selectedTracks = TrackSelector.selectByMixId(affectedMixIds);
-        
         Map<Id, List<Track__c>> tracksByMixId = Utils.getParentIdToChildrenMapping(selectedTracks, Consts.FIELD_MIX);
 
         for(Track__c track : newTracks)
@@ -22,8 +20,6 @@ public with sharing class TrackService
             {
                 track.addError('Cannot add more than ' + Consts.MAX_TRACKS_PER_MIX + ' tracks to a mix');
             }
-
-            System.debug('tracks: ' + tracks.size());
 
             tracksByMixId.put(track.Mix__c, new List<Track__c>(tracks));
         }

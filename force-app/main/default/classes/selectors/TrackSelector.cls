@@ -10,6 +10,30 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
         return Track__c.SObjectType;
     }
 
+    public static List<Track__c> getTracksBySongIds(Set<Id> songIds)
+    {
+        TrackSelector selector = new TrackSelector();
+
+        fflib_QueryFactory queryFactory = selector.newQueryFactory();
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Song__c IN :songIds').toSOQL());
+    }
+
+    public static List<Track__c> selectByMixId(Set<Id> mixIds)
+    {
+        TrackSelector selector = new TrackSelector();
+
+        fflib_QueryFactory queryFactory = selector.newQueryFactory();
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Mix__c = :mixIds').toSOQL());
+    }
+
+    public static List<Track__c> selectByIds(Set<Id> trackIds)
+    {
+        TrackSelector selector = new TrackSelector();
+
+        fflib_QueryFactory queryFactory = selector.newQueryFactory();
+        return (List<Track__c>) Database.query(queryFactory.setCondition('Id IN :trackIds').toSOQL());
+    }
+    
     public static List<AggregateResult> countTracksOnSongs(Set<Id> songIds)
     {
         String query = 'SELECT Song__c ' + Consts.FIELD_SONG + ', COUNT(Id) ' + Consts.AGGREGATE_COUNT + ' FROM Track__c WHERE Song__c IN :songIds GROUP BY Song__c';
@@ -42,29 +66,5 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
             GROUP BY Mix__c
             HAVING COUNT(Id) >= :Consts.MAX_TRACKS_PER_MIX
             AND Mix__c IN :mixIds];
-    }
-
-    public static List<Track__c> getTracksBySongIds(Set<Id> songIds)
-    {
-        TrackSelector selector = new TrackSelector();
-
-        fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Track__c>) Database.query(queryFactory.setCondition('Song__c IN :songIds').toSOQL());
-    }
-
-    public static List<Track__c> selectByMixId(Set<Id> mixIds)
-    {
-        TrackSelector selector = new TrackSelector();
-
-        fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Track__c>) Database.query(queryFactory.setCondition('Mix__c = :mixIds').toSOQL());
-    }
-
-    public static List<Track__c> selectByIds(Set<Id> trackIds)
-    {
-        TrackSelector selector = new TrackSelector();
-
-        fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Track__c>) Database.query(queryFactory.setCondition('Id IN :trackIds').toSOQL());
     }
 }

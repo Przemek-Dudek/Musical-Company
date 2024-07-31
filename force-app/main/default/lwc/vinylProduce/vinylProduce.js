@@ -42,7 +42,7 @@ export default class VinylProduce extends LightningElement
 
         const mix = {
             mixId: this.mixId,
-            selectedTracks: songIndexes
+            songIndexes: songIndexes
         };
 
         handleVinylProduce({ mixJson: JSON.stringify(mix) })

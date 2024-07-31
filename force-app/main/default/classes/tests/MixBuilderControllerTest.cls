@@ -27,7 +27,6 @@ private class MixBuilderControllerTest
     static void testHandleMixUpsertNew()
     {
         List<Mix__c> mixes = [SELECT Id, Name FROM Mix__c];
-
         delete mixes;
 
         MixWrapper wrapper = new MixWrapper(
@@ -96,16 +95,16 @@ private class MixBuilderControllerTest
         Mix__c mix = [SELECT Id, Name FROM Mix__c LIMIT 1];
         List<Track__c> tracks = [SELECT Id, Song__c, Index__c FROM Track__c WHERE Mix__c = :mix.Id];
 
-        List<VinylWrapper.SongIndex> selectedTracks = new List<VinylWrapper.SongIndex>();
+        List<MixWrapper.SongIndex> songIndexes = new List<MixWrapper.SongIndex>();
 
         for(Integer i = 0; i < tracks.size(); i++)
         {
-            selectedTracks.add(new VinylWrapper.SongIndex(tracks[i].Song__c, i));
+            songIndexes.add(new MixWrapper.SongIndex(tracks[i].Song__c, i));
         }
 
-        VinylWrapper wrapper = new VinylWrapper(
+        MixWrapper wrapper = new MixWrapper(
             mix.Id, mix.Name, null,
-            selectedTracks
+            songIndexes
         );
 
         Test.startTest();
@@ -123,7 +122,6 @@ private class MixBuilderControllerTest
     static void testSendEmailPdf()
     {
         insert new Contact(FirstName = 'Test', LastName = 'Contact', Email = 'test@email.com');
-
         Contact contact = [SELECT Id FROM Contact LIMIT 1];
 
         Test.startTest();
@@ -138,7 +136,6 @@ private class MixBuilderControllerTest
     static void getSongsByIds()
     {
         List<Song__c> songs = [SELECT Id FROM Song__c LIMIT 50];
-
         Set<Id> songIds = Utils.getIdFieldValue(songs, 'Id');
 
         Test.startTest();

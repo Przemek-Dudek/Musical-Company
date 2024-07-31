@@ -10,7 +10,6 @@ public with sharing class SongTriggerTest
     static void testChangeSongGenre()
     {
         List<Song__c> songs = [SELECT Id, Genre__c FROM Song__c];
-
         for(Song__c song : songs)
         {
             song.Genre__c = TestHelper.GENRE_POP;
@@ -49,7 +48,6 @@ public with sharing class SongTriggerTest
     static void UndeleteSongs()
     {
         List<Song__c> songs = [SELECT Id FROM Song__c];
-
         delete songs;
 
         Test.startTest();

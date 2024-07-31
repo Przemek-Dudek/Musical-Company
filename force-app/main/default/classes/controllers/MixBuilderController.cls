@@ -34,12 +34,12 @@ public with sharing class MixBuilderController
     @AuraEnabled(cacheable=false)
     public static void handleVinylProduce(String mixJson)
     {
-        VinylWrapper vinyl = (VinylWrapper)JSON.deserialize(mixJson, VinylWrapper.class);
+        MixWrapper mix = (MixWrapper)JSON.deserialize(mixJson, MixWrapper.class);
 
-        Id mixId = vinyl.mixId;
+        Id mixId = mix.mixId;
 
         Map<Id, Integer> songIds = new Map<Id, Integer>();
-        for (VinylWrapper.SongIndex song : vinyl.selectedTracks)
+        for (MixWrapper.SongIndex song : mix.songIndexes)
         {
             songIds.put(song.songId, (Integer)song.songIndex);
         }

@@ -1,31 +1,21 @@
 @isTest
 private class MixSelectorTest
 {
+    @TestSetup
+    static void makeData(){
+        TestHelper.insertEmptyMixes();
+    }
 
     @isTest
     static void selectById()
     {
-        List<Mix__c> mixes = new List<Mix__c>();
-        for(Integer i = 0; i < 200; i++)
-        {
-            Mix__c mix = new Mix__c();
-            mix.Name = 'Test' + i;
-            mixes.add(mix);
-        }
-
-        insert mixes;
-
-        Set<Id> mixIds = new Set<Id>();
-        
-        for(Mix__c mix : mixes)
-        {
-            mixIds.add(mix.Id);
-        }
+        List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT :TestHelper.MIX_AMOUNT];
+        Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
 
         Test.startTest();
         List<Mix__c> selectedMixes = MixSelector.selectById(mixIds);
         Test.stopTest();
 
-        System.assertEquals(200, selectedMixes.size());
+        System.assertEquals(TestHelper.MIX_AMOUNT, selectedMixes.size());
     }
 }

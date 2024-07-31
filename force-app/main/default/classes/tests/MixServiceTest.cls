@@ -10,19 +10,12 @@ public with sharing class MixServiceTest
     @isTest
     static void getMixGenreCountMap()
     {
-        Set<Id> mixIds = new Set<Id>();
-
         List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];
-
-        for(Mix__c mix : mixes)
-        {
-            mixIds.add(mix.Id);
-        }
+        Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
 
         Map<Id, Map<String, Integer>> mixGenreCount = MixService.getMixGenreCountMap(mixIds);
 
         System.assertEquals(3, mixGenreCount.size());
-
         for(Mix__c mix : mixes)
         {
             System.assertEquals(10, mixGenreCount.get(mix.Id).get(TestHelper.GENRE_ROCK));
@@ -33,7 +26,6 @@ public with sharing class MixServiceTest
     static void updateMixFields()
     {
         List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];
-
         Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
 
         Test.startTest();
@@ -41,7 +33,6 @@ public with sharing class MixServiceTest
         Test.stopTest();
 
         List<Mix__c> updatedMixes = [SELECT Id, Primary_Genre__c, Secondary_Genre__c FROM Mix__c LIMIT 3];
-
         for(Mix__c mix : updatedMixes)
         {
             System.assertEquals(TestHelper.GENRE_ROCK, mix.Primary_Genre__c);
@@ -53,10 +44,11 @@ public with sharing class MixServiceTest
     static void getFullMixIdsNoFullMixes()
     {
         List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];
-
         Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
 
+        Test.startTest();
         Set<Id> fullMixIds = MixService.getFullMixIds(mixIds);
+        Test.stopTest();
 
         System.assertEquals(0, fullMixIds.size());
     }
@@ -65,14 +57,12 @@ public with sharing class MixServiceTest
     static void getFullMixIds()
     {
         List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];
-
         Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
 
         Mix__c fullMix = new Mix__c(Name = 'Full Mix');
         insert fullMix;
 
         List<Track__c> tracksToAdd = new List<Track__c>();
-
         List<Song__c> songs = [SELECT Id FROM Song__c LIMIT 20];
 
         for(Integer i = 0; i < 20; i++)
@@ -85,7 +75,6 @@ public with sharing class MixServiceTest
         }
 
         insert tracksToAdd;
-
         mixIds.add(fullMix.Id);
 
         Test.startTest();
@@ -100,33 +89,9 @@ public with sharing class MixServiceTest
     static void createNewMix()
     {
         List<Mix__c> mixes = [SELECT Id FROM Mix__c];
-
         delete mixes;
 
-        List<Song__c> songs = new List<Song__c>();
-
-        for(Integer i = 0; i < 20; i++)
-        {
-            Song__c song = new Song__c();
-            song.Name = 'Test' + i;
-            song.Length__c = 180;
-            song.Artist__c = 'Test Artist' + i;
-            song.Track_Count__c = 0;
-            song.Track_Licenses__c = 10;
-
-            if(i < 15) 
-            {
-                song.Genre__c = TestHelper.GENRE_ROCK;
-            }
-            else
-            {
-                song.Genre__c = TestHelper.GENRE_POP;
-            }
-
-            songs.add(song);
-        }
-
-        insert songs;
+        List<Song__c> songs = TestHelper.insert20Songs();
 
         MixWrapper mix = new MixWrapper(null, 'New Mix', null, songs);
 
@@ -146,7 +111,6 @@ public with sharing class MixServiceTest
     static void updateExistingMixMoreSongs()
     {
         Mix__c mixToUpdate = [SELECT Id FROM Mix__c LIMIT 1];
-
         List<Song__c> songs = [SELECT Id FROM Song__c LIMIT 20];
 
         MixWrapper mixWrapper = new MixWrapper(mixToUpdate.Id, 'Updated Mix', null, songs);
@@ -165,7 +129,6 @@ public with sharing class MixServiceTest
     static void updateExistingMixLessSongs()
     {
         Mix__c mixToUpdate = [SELECT Id FROM Mix__c LIMIT 1];
-
         List<Song__c> songs = [SELECT Id FROM Song__c LIMIT 5];
 
         MixWrapper mixWrapper = new MixWrapper(mixToUpdate.Id, 'Updated Mix', null, songs);

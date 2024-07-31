@@ -3,14 +3,12 @@ public with sharing class SongService
     public static void updateSongFields(Set<Id> songIds)
     {
         List<AggregateResult> results = TrackSelector.countTracksOnSongs(songIds);
-
         if(results.isEmpty())
         {
             return;
         }
 
         List<Song__c> songsToUpdate = new List<Song__c>();
-
         for (AggregateResult res : results)
         {
             Id songId = (Id)res.get(Consts.FIELD_SONG);
