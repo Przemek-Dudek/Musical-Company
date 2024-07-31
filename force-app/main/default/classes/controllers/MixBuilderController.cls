@@ -5,12 +5,13 @@ public with sharing class MixBuilderController
     {
         Mix__c selectedMix = MixSelector.selectById(new Set<Id>{(Id)mixId})[0];
 
-        Set<Id> selectedSongIds = TrackService.getSongIdsFromTracks(
-            TrackSelector.selectByMixId(new Set<Id>{(Id)mixId}));
+        Set<Id> selectedSongIds = Utils.getIdFieldValue(
+            TrackSelector.selectByMixId(new Set<Id>{(Id)mixId}), Consts.FIELD_SONG);
 
         MixWrapper wrapper = new MixWrapper(
             selectedMix.Id, selectedMix.Name, selectedMix.Customer__c,
-            SongSelector.selectById(selectedSongIds));
+            SongSelector.selectById(selectedSongIds)
+        );
 
         return JSON.serialize(wrapper);
     }
@@ -33,23 +34,23 @@ public with sharing class MixBuilderController
     @AuraEnabled(cacheable=false)
     public static void handleVinylProduce(String mixJson)
     {
-        VinylWrapper vinyl = (VinylWrapper)JSON.deserialize(mixJson, VinylWrapper.class);
+        MixWrapper mix = (MixWrapper)JSON.deserialize(mixJson, MixWrapper.class);
 
-        Id mixId = vinyl.mixId;
+        Id mixId = mix.mixId;
 
         Map<Id, Integer> songIds = new Map<Id, Integer>();
-        for (Track__c song : vinyl.selectedTracks)
+        for (MixWrapper.SongIndex song : mix.songIndexes)
         {
-            songIds.put(song.Id, (Integer)song.Index__c);
+            songIds.put(song.songId, (Integer)song.songIndex);
         }
 
         List<Track__c> tracks = TrackSelector.selectByMixId(new Set<Id>{mixId});
-
+        
         for (Track__c track : tracks)
         {
             track.Index__c = songIds.get(track.Song__c);
         }
-
+        
         update tracks;
     }
 
@@ -82,6 +83,12 @@ public with sharing class MixBuilderController
     public static Integer getPages(String genre)
     {
         Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get('n');
+
+        if (Math.mod(numberOfRecords, Consts.PAGINATION_BATCH_SIZE) == 0 && numberOfRecords > 0)
+        {
+            return numberOfRecords/Consts.PAGINATION_BATCH_SIZE;
+        }
+
         return numberOfRecords/Consts.PAGINATION_BATCH_SIZE + 1;
     }
 
@@ -95,8 +102,8 @@ public with sharing class MixBuilderController
         for (Track__c track : tracks)
         {
             Map<String, Object> songMap = new Map<String, Object>();
-            songMap.put('Id', track.Song__c);
-            songMap.put('Index__c', track.Index__c);
+            songMap.put(Consts.FIELD_ID, track.Song__c);
+            songMap.put(Consts.FIELD_INDEX, track.Index__c);
             songIds.add(songMap);
         }
 
@@ -107,8 +114,6 @@ public with sharing class MixBuilderController
     public static void sendEmailWithPdf(String contactId, String pdfBase64, String fileName)
     {
         List<Contact> contacts = ContactSelector.selectById(new Set<Id>{(Id)contactId});
-
-        System.debug('Sending email with PDF to: ' + contacts[0].Email);
         
         EmailManager.sendEmailWithPdf(contacts, pdfBase64, fileName);
     }

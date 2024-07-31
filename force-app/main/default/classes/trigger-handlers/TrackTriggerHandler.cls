@@ -80,27 +80,14 @@ public with sharing class TrackTriggerHandler extends TriggerHandlerBase
 
     private void handleMixUpdates(Map<Id, Track__c> trackMap)
     {
-        Set<Id> mixIds = new Set<Id>();
-
-        for (Track__c track : trackMap.values())
-        {
-            mixIds.add(track.Mix__c);
-        }
+        Set<Id> mixIds = Utils.getIdFieldValue(trackMap.values(), Consts.FIELD_MIX);
 
         MixService.updateMixFields(mixIds);
     }
 
     private void handleTrackCount(Map<Id, Track__c> trackMap)
     {
-        Set<Id> songIds = new Set<Id>();
-
-        for (Track__c track : trackMap.values())
-        {
-            if (track.Song__c != null)
-            {
-                songIds.add(track.Song__c);
-            }
-        }
+        Set<Id> songIds = Utils.getIdFieldValue(trackMap.values(), Consts.FIELD_SONG);
 
         SongService.updateSongFields(songIds);
     }
