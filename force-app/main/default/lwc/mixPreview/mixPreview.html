@@ -30,12 +30,16 @@
             <div class="slds-grid slds-wrap slds-gutters slds-var-p-horizontal_x-large">
                 <div class="slds-col slds-var-p-around_small slds-size_1-of-1 datatable-container">
                     <lightning-datatable
+                        if:false={isLoading}
                         class="slds-scrollable_y"
                         data={selectedSongs}
                         columns={columns}
                         key-field="Id"
                         hide-checkbox-column="true"
                     ></lightning-datatable>
+                    <div class="slds-is-relative slds-var-p-around_large" lwc:if={isLoading}>
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
                 </div>
             </div>
         </div>

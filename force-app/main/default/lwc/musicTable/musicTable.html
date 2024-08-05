@@ -11,7 +11,11 @@
                 ></lightning-combobox>
             </div>
             <div class="slds-p-top_medium">
+                <div class="slds-is-relative slds-var-p-around_large" lwc:if={isLoading}>
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
                 <lightning-datatable
+                    if:false={isLoading} 
                     key-field="Id"
                     data={displayList}
                     columns={columns}

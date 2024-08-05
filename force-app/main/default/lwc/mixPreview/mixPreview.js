@@ -21,6 +21,8 @@ export default class MixPreview extends LightningElement
     @track _selectedSongs = [];
     @track contactName;
 
+    @api isLoading;
+
     @api
     get selectedSongs() {
         return this._selectedSongs;
@@ -33,18 +35,15 @@ export default class MixPreview extends LightningElement
         }));
     }
 
-    get isSongsLimitExceeded()
-    {
+    get isSongsLimitExceeded() {
         return this._selectedSongs.length > 20;
     }
 
-    get limitExceeded()
-    {
+    get limitExceeded() {
         return this._selectedSongs.length - 20;
     }
 
-    get isMixLengthExceeded()
-    {
+    get isMixLengthExceeded() {
         return this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0) > 90;
     }
 
@@ -52,13 +51,12 @@ export default class MixPreview extends LightningElement
         return this._selectedSongs.length;
     }
 
-    get mixLength(){
+    get mixLength() {
         const totalLength = this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
         return this.formatTime(totalLength);
     }
 
-    get mixLengthExceeded()
-    {
+    get mixLengthExceeded() {
         let totalLength = this._selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
         totalLength -= 90;
         return this.formatTime(totalLength);
@@ -72,14 +70,11 @@ export default class MixPreview extends LightningElement
     }
 
     @wire(getRecord, { recordId: '$selectedContactId', fields: ['Contact.Name'] })
-    wiredContact({ error, data })
-    {
-        if (data)
-        {
+    wiredContact({ error, data }) {
+        if (data) {
             this.contactName = data.fields.Name.value;
         }
-        else if (error)
-        {
+        else if (error) {
             console.error(error);
             this.dispatchToastError('Error loading contact preview', error.message);
         }

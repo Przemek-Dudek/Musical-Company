@@ -10,8 +10,8 @@ const VIEW = '/view';
 export default class MixBuilder extends LightningElement
 {
     @api recordId;
+    @api contactId;
 
-    @track selectedContactId;
     @track mixName;
     @track selectedSongs = [];
 
@@ -20,7 +20,7 @@ export default class MixBuilder extends LightningElement
         if (data) {
             data = JSON.parse(data);
             this.mixName = data.mixName;
-            this.selectedContactId = data.contactId;
+            this.contactId = data.contactId;
             this.selectedSongs = data.selectedSongs.map(song => ({
                 ...song,
                 url: SONG_URL + song.Id + VIEW
@@ -30,8 +30,7 @@ export default class MixBuilder extends LightningElement
             this.dispatchToastError('Error loading mix', error.message);
         }
 
-        if(!this.mixName)
-        {
+        if(!this.mixName) {
             this.mixName = 'New Mix';
         }
     }
@@ -45,7 +44,7 @@ export default class MixBuilder extends LightningElement
     }
 
     handleContactEvent(event) {
-        this.selectedContactId = event.detail.recordId;
+        this.contactId = event.detail.recordId;
     }
 
     closeModal() {
@@ -65,26 +64,25 @@ export default class MixBuilder extends LightningElement
     }
 
     handleSave() {
-        if(!this.mixValid())
-        {
+        if(!this.mixValid()) {
             return;
         }
 
         const mix = {
             mixId: this.recordId,
             mixName: this.mixName,
-            contactId: this.selectedContactId,
+            contactId: this.contactId,
             selectedSongs: this.selectedSongs.map(song => song)
         };
 
         handleMixUpsert({ mixJson: JSON.stringify(mix) })
-            .then(result => {
-                this.dispatchEvent(new CustomEvent('mixsave', { detail: result }));
-                this.closeModal();
-            })
-            .catch(error => {
-                console.error('Error saving mix', error);
-            });
+        .then(result => {
+            this.dispatchEvent(new CustomEvent('mixsave', { detail: result }));
+            this.closeModal();
+        })
+        .catch(error => {
+            console.error('Error saving mix', error);
+        });
     }
 
     mixValid()
@@ -94,7 +92,7 @@ export default class MixBuilder extends LightningElement
             return false;
         }
 
-        if (!this.selectedContactId) {
+        if (!this.contactId) {
             this.dispatchToastError('Please select a contact.');
             return false;
         }

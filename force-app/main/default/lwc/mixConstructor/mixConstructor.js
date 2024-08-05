@@ -6,8 +6,7 @@ export default class MixConstructor extends LightningElement
     @api mixName = 'New Mix';
     @api selectedSongs = [];
 
-    connectedCallback()
-    {
+    connectedCallback() {
         this.dispatchEvent(new CustomEvent('name', { detail: { value: this.mixName } }));
         this.dispatchEvent(new CustomEvent('contact', { detail: { recordId: this.selectedContactId } }));
     }

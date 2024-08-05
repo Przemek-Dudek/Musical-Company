@@ -26,9 +26,11 @@ export default class MixLookup extends LightningElement {
     @track vinylModal = false;
 
     pdfLibInitialized = false;
+    isLoading = true
 
     @wire(getMix, { mixId: '$recordId' })
     wiredMix({ error, data }) {
+        this.isLoading = true;
         if (data) {
             data = JSON.parse(data);
             this.mixName = data.mixName;
@@ -44,32 +46,37 @@ export default class MixLookup extends LightningElement {
             console.error('Error loading mix', error);
             this.dispatchToastError('Error loading mix', error.message);
         }
+
+        this.isLoading = false;
     }
 
     @wire(getRecord, { recordId: '$selectedContactId', fields: ['Contact.Name'] })
-    wiredContact({ error, data })
-    {
-        if (data)
-        {
+    wiredContact({ error, data }) {
+        this.isLoading = true;
+
+        if (data) {
             this.contactName = data.fields.Name.value;
         }
-        else if (error)
-        {
+        else if (error) {
             console.error(error);
             this.dispatchToastError('Error loading contact', error.message);
         }
+
+        this.isLoading = false;
     }
 
     @wire(getTrackOrder, { mixId: '$recordId' })
     wiredOrder({ error, data }) {
-        if (data)
-        {
+        this.isLoading = true;
+        if (data) {
             this.songOrder = new Map(data.map(track => [track.Id, track.Index__c]));
             this.organizeSongs();
         } else if (error) {
             console.error('Error loading order', error);
             this.dispatchToastError('Error loading order', error.message);
         }
+
+        this.isLoading = false;
     }
 
     organizeSongs() {
@@ -105,13 +112,11 @@ export default class MixLookup extends LightningElement {
         return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    get customerName()
-    {
+    get customerName() {
         return CREATED_BY + this.contactName;
     }
 
-    get songTitles()
-    {
+    get songTitles() {
         let songs = '';
 
         this.selectedSongs.forEach(song => {
@@ -121,8 +126,7 @@ export default class MixLookup extends LightningElement {
         return songs;
     }
 
-    get songArtists()
-    {
+    get songArtists() {
         let artists = '';
 
         this.selectedSongs.forEach(song => {
@@ -132,8 +136,7 @@ export default class MixLookup extends LightningElement {
         return artists;
     }
 
-    get songLengths()
-    {
+    get songLengths() {
         let lengths = '';
 
         this.selectedSongs.forEach(song => {
@@ -143,8 +146,7 @@ export default class MixLookup extends LightningElement {
         return lengths;
     }
 
-    get songGenres()
-    {
+    get songGenres() {
         let genres = '';
 
         this.selectedSongs.forEach(song => {
@@ -154,18 +156,16 @@ export default class MixLookup extends LightningElement {
         return genres;
     }
 
-    get trackCount()
-    {
+    get trackCount() {
         return this.selectedSongs.length;
     }
 
-    get mixLength(){
+    get mixLength() {
         const totalLength = this.selectedSongs.reduce((acc, song) => acc + song.Length__c, 0);
         return this.formatTime(totalLength);
     }
 
-    get mixStats()
-    {
+    get mixStats() {
         return 'A custom mix comprised of ' + this.trackCount + ' unique Tracks.'
             + ' Total listening time: ' + this.mixLength + ' minutes.';
     }

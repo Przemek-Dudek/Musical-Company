@@ -1,7 +1,8 @@
 <template>
         <div class="slds-grid slds-wrap">
             <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
-                <lightning-input 
+                <lightning-input
+                    required="true" 
                     type="text" 
                     value={mixName} 
                     label="Change Mix Name"
@@ -10,6 +11,7 @@
             </div>
             <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
                 <lightning-record-picker
+                    required="true"
                     value={selectedContactId}
                     label="Customer" 
                     placeholder="Select Customer" 

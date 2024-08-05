@@ -31,27 +31,36 @@ export default class MusicTable extends LightningElement
 
     @api selectedSongs = [];
 
+    isLoading = true;
+
     @wire(getPages, { genre: '$selectedGenre'})
     wiredPages({ error, data }) {
+        this.isLoading = true;
         if (data) {
             this.totalPages = data;
         } else if (error) {
             console.error(error);
         }
+
+        this.isLoading = false;
     }
 
     @wire(getGenres)
     wiredGenres({ error, data }) {
+        this.isLoading = true;
         if (data) {
             this.genres = data.map(genre => ({ label: genre, value: genre }));
             this.genres.unshift({ label: 'All', value: 'all' });
         } else if (error) {
             console.error(error);
         }
+        
+        this.isLoading = false;
     }
 
     @wire(getSongsByGenre, { genre: '$selectedGenre', offset: '$offset' })
     wiredSongs({ error, data }) {
+        this.isLoading = true;
         if (data) {
             this.musicList = data.map(song => ({
                 ...song,
@@ -63,6 +72,8 @@ export default class MusicTable extends LightningElement
         } else if (error) {
             console.error(error);
         }
+        
+        this.isLoading = false;
     }
 
     get offset() {
@@ -70,8 +81,7 @@ export default class MusicTable extends LightningElement
         return this.currentPage - 1;
     }
 
-    get selectedRowsGet()
-    {
+    get selectedRowsGet() {
         return this.selectedSongs.filter(
             song => this.displayList.some(
                 displaySong => displaySong.Id === song.Id))
@@ -82,17 +92,14 @@ export default class MusicTable extends LightningElement
         const selectedRows = event.detail.selectedRows;
         const action = event.detail.config.action;
 
-        if (action === 'rowSelect' || action === 'selectAllRows')
-        {
+        if (action === 'rowSelect' || action === 'selectAllRows') {
             this.selectedSongs = this.selectedSongs.filter(song => !selectedRows.some(row => row.Id === song.Id));
             this.selectedSongs = this.selectedSongs.concat(selectedRows);
         }
-        else if (action === 'rowDeselect')
-        {
+        else if (action === 'rowDeselect') {
             this.selectedSongs = this.selectedSongs.filter(song => song.Id !== event.detail.config.value);
         }
-        else if (action === 'deselectAllRows')
-        {
+        else if (action === 'deselectAllRows') {
             this.selectedSongs = this.selectedSongs.filter(song => selectedRows.some(row => row.Id === song.Id));
         }
 
@@ -107,8 +114,7 @@ export default class MusicTable extends LightningElement
         return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
-    updateDisplayList()
-    {
+    updateDisplayList() {
         this.displayList = this.musicList.slice((this.currentPage - 1) * 10, this.currentPage * 10);
     }
 
@@ -117,26 +123,22 @@ export default class MusicTable extends LightningElement
         this.selectedGenre = event.detail.value;
     }
 
-    handleFirstPage()
-    {
+    handleFirstPage() {
         this.currentPage = 1;
         this.updateDisplayList();
     }
 
-    handlePreviousPage()
-    {
+    handlePreviousPage() {
         this.currentPage = Math.max(1, this.currentPage - 1);
         this.updateDisplayList();
     }
 
-    handleNextPage()
-    {
+    handleNextPage() {
         this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
         this.updateDisplayList();
     }
 
-    handleLastPage()
-    {
+    handleLastPage() {
         this.currentPage = this.totalPages;
         this.updateDisplayList();
     }

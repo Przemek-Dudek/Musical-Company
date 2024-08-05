@@ -11,7 +11,7 @@
                             onsongsloaded={handleSongsEvent}
                             onname={handleNameEvent}
                             oncontact={handleContactEvent}
-                            selected-contact-id={selectedContactId}
+                            selected-contact-id={contactId}
                             selected-songs={selectedSongs}
                             mix-name={mixName}
                         ></c-mix-constructor>
@@ -19,7 +19,7 @@
                     <lightning-tab label="Mix Preview">
                         <c-mix-preview
                             selected-songs={selectedSongs}
-                            selected-contact-id={selectedContactId}
+                            selected-contact-id={contactId}
                             mix-name={mixName}
                         ></c-mix-preview>
                     </lightning-tab>
