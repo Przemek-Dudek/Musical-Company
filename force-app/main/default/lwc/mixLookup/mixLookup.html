@@ -17,11 +17,14 @@
         <div class="slds-backdrop slds-backdrop_open"></div>
     </div>
     <lightning-card>
+        <div lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
         <c-mix-preview
+            if:false={isLoading}
             selected-contact-id={selectedContactId}
             mix-name={mixName}
             selected-songs={selectedSongs}
-            is-loading={isLoading}
         ></c-mix-preview>
         <div slot="footer" class="slds-align_absolute-center">
             <div class="slds-p-horizontal_x-small">

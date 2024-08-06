@@ -2,14 +2,14 @@
     <div lwc:if={isSongsLimitExceeded} class="slds-p-horizontal_x-large slds-p-top_medium">
         <div>
             <div class="slds-box slds-box_small slds-align_absolute-center">
-                Couldnt load the mix as it exceeds the limit of 20 songs.
+                Couldn't load the mix as it exceeds the limit of 20 songs.
                 Please remove {limitExceeded} song(s) from the mix and try again.
             </div>
         </div>
     </div>
-    <div lwc:elseif={isMixLengthExceeded} class="slds-p-horizontal_x-large slds-p-top_medium">
+    <div lwc:if={isMixLengthExceeded} class="slds-p-horizontal_x-large slds-p-top_medium">
         <div class="slds-box slds-box_small slds-align_absolute-center">
-            Couldnt load the mix as it exceeds the limit of 90 minutes.
+            Couldn't load the mix as it exceeds the limit of 90 minutes.
             Please remove {mixLengthExceeded} minutes from the mix and try again.
         </div>
     </div>
@@ -30,16 +30,12 @@
             <div class="slds-grid slds-wrap slds-gutters slds-var-p-horizontal_x-large">
                 <div class="slds-col slds-var-p-around_small slds-size_1-of-1 datatable-container">
                     <lightning-datatable
-                        if:false={isLoading}
                         class="slds-scrollable_y"
                         data={selectedSongs}
                         columns={columns}
                         key-field="Id"
                         hide-checkbox-column="true"
                     ></lightning-datatable>
-                    <div class="slds-is-relative slds-var-p-around_large" lwc:if={isLoading}>
-                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-                    </div>
                 </div>
             </div>
         </div>

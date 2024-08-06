@@ -5,6 +5,7 @@ import getMix from '@salesforce/apex/MixBuilderController.getMix';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 const SONG_URL = '/lightning/r/Song__c/';
+const MIX_URL = '/lightning/r/Mix__c/';
 const VIEW = '/view';
 
 export default class MixBuilder extends LightningElement
@@ -15,28 +16,60 @@ export default class MixBuilder extends LightningElement
     @track mixName;
     @track selectedSongs = [];
 
-    @wire(getMix, { mixId: '$recordId' })
-    wiredMix({ error, data }) {
-        if (data) {
-            data = JSON.parse(data);
-            this.mixName = data.mixName;
-            this.contactId = data.contactId;
-            this.selectedSongs = data.selectedSongs.map(song => ({
-                ...song,
-                url: SONG_URL + song.Id + VIEW
-            }));
-        } else if (error) {
-            console.error('Error loading mix', error);
-            this.dispatchToastError('Error loading mix', error.message);
-        }
+    isLoading = false;
 
-        if(!this.mixName) {
+    // @wire(getMix, { mixId: '$recordId' })
+    // wiredMix({ error, data }) {
+    //     if (data) {
+    //         data = JSON.parse(data);
+    //         this.mixName = data.mixName;
+    //         this.contactId = data.contactId;
+    //         this.selectedSongs = data.selectedSongs.map(song => ({
+    //             ...song,
+    //             url: SONG_URL + song.Id + VIEW
+    //         }));
+    //     } else if (error) {
+    //         console.error('Error loading mix', error);
+    //         this.dispatchToastError('Error loading mix', error.message);
+    //     }
+
+    //     if(!this.mixName) {
+    //         this.mixName = 'New Mix';
+    //     }
+    // }
+
+    //removed wire as it doesn't allow for cashable=false, which is a fix for the issue of the mix not updating after a song is added/removed
+    connectedCallback() {
+        if (this.recordId) {
+            getMix({ mixId: this.recordId })
+            .then(result => {
+                try {
+                    const parsedResult = JSON.parse(result);
+    
+                    this.mixName = parsedResult.mixName;
+                    this.contactId = parsedResult.contactId;
+    
+                    this.selectedSongs = parsedResult.selectedSongs.map(song => ({
+                        ...song,
+                        url: SONG_URL + song.Id + VIEW
+                    }));
+                } catch (error) {
+                    console.error('Error parsing result', error);
+                    this.dispatchToastError('Error parsing result', error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading mix', error);
+                this.dispatchToastError('Error loading mix', error.message);
+            });
+        } else {
             this.mixName = 'New Mix';
         }
     }
 
     handleSongsEvent(event) {
         this.selectedSongs = event.detail;
+        this.isLoading = false;
     }
 
     handleNameEvent(event) {
@@ -60,13 +93,28 @@ export default class MixBuilder extends LightningElement
             backdrop.classList.add('slds-hidden');
         }
 
-        window.history.back();
+        this.navigateToMixView();
+    }
+
+    handleCancel() {
+        this.closeModal();
+    }
+
+    navigateToMixView() {
+        if (this.recordId) {
+            const url = MIX_URL + this.recordId + VIEW;
+            window.location.href = url;
+        } else {
+            window.history.back();
+        }
     }
 
     handleSave() {
         if(!this.mixValid()) {
             return;
         }
+
+        this.isLoading = true;
 
         const mix = {
             mixId: this.recordId,
@@ -77,12 +125,20 @@ export default class MixBuilder extends LightningElement
 
         handleMixUpsert({ mixJson: JSON.stringify(mix) })
         .then(result => {
-            this.dispatchEvent(new CustomEvent('mixsave', { detail: result }));
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Success',
+                message: 'Mix saved successfully.',
+                variant: 'success'
+            }));
+
+            this.recordId = result;
             this.closeModal();
         })
         .catch(error => {
-            console.error('Error saving mix', error);
+            this.dispatchToastError(error.body.message);
         });
+
+        this.isLoading = false;
     }
 
     mixValid()

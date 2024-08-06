@@ -9,6 +9,8 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         fieldsList.add(Song__c.Genre__c);
         fieldsList.add(Song__c.Length__c);
         fieldsList.add(Song__c.Artist__c);
+        fieldsList.add(Song__c.Track_Count__c);
+        fieldsList.add(Song__c.Track_Licenses__c);
 
         return fieldsList;
     }
@@ -23,7 +25,7 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         SongSelector selector = new SongSelector();
 
         fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Song__c>) Database.query(queryFactory.setCondition('Id IN :ids').toSOQL());
+        return (List<Song__c>) Database.query(queryFactory.setCondition('Id IN :ids').addOrdering(Consts.FIELD_NAME, fflib_QueryFactory.SortOrder.ASCENDING).toSOQL());
     }
 
     public static List<Song__c> selectByGenre(String genre, Integer offset)

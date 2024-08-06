@@ -28,23 +28,54 @@ export default class MixLookup extends LightningElement {
     pdfLibInitialized = false;
     isLoading = true
 
-    @wire(getMix, { mixId: '$recordId' })
-    wiredMix({ error, data }) {
-        this.isLoading = true;
-        if (data) {
-            data = JSON.parse(data);
-            this.mixName = data.mixName;
-            this.selectedContactId = data.contactId;
-            this.selectedSongs = data.selectedSongs.map(song => ({
-                ...song,
-                url: SONG_URL + song.Id + VIEW,
-                formattedLength: this.formatTime(song.Length__c)
-            }));
+    // @wire(getMix, { mixId: '$recordId' })
+    // wiredMix({ error, data }) {
+    //     this.isLoading = true;
+    //     if (data) {
+    //         data = JSON.parse(data);
+    //         this.mixName = data.mixName;
+    //         this.selectedContactId = data.contactId;
+    //         this.selectedSongs = data.selectedSongs.map(song => ({
+    //             ...song,
+    //             url: SONG_URL + song.Id + VIEW,
+    //             formattedLength: this.formatTime(song.Length__c)
+    //         }));
 
-            this.organizeSongs();
-        } else if (error) {
-            console.error('Error loading mix', error);
-            this.dispatchToastError('Error loading mix', error.message);
+    //         this.organizeSongs();
+    //     } else if (error) {
+    //         console.error('Error loading mix', error);
+    //         this.dispatchToastError('Error loading mix', error.message);
+    //     }
+
+    //     this.isLoading = false;
+    // }
+
+    connectedCallback() {
+        if (this.recordId) {
+            this.isLoading = true;
+            getMix({ mixId: this.recordId })
+            .then(result => {
+                try {
+                    const parsedResult = JSON.parse(result);
+    
+                    this.mixName = parsedResult.mixName;
+                    this.contactId = parsedResult.contactId;
+    
+                    this.selectedSongs = parsedResult.selectedSongs.map(song => ({
+                        ...song,
+                        url: SONG_URL + song.Id + VIEW
+                    }));
+                } catch (error) {
+                    console.error('Error parsing result', error);
+                    this.dispatchToastError('Error parsing result', error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading mix', error);
+                this.dispatchToastError('Error loading mix', error.message);
+            });
+        } else {
+            this.mixName = 'New Mix';
         }
 
         this.isLoading = false;
@@ -52,8 +83,6 @@ export default class MixLookup extends LightningElement {
 
     @wire(getRecord, { recordId: '$selectedContactId', fields: ['Contact.Name'] })
     wiredContact({ error, data }) {
-        this.isLoading = true;
-
         if (data) {
             this.contactName = data.fields.Name.value;
         }
@@ -61,13 +90,10 @@ export default class MixLookup extends LightningElement {
             console.error(error);
             this.dispatchToastError('Error loading contact', error.message);
         }
-
-        this.isLoading = false;
     }
 
     @wire(getTrackOrder, { mixId: '$recordId' })
     wiredOrder({ error, data }) {
-        this.isLoading = true;
         if (data) {
             this.songOrder = new Map(data.map(track => [track.Id, track.Index__c]));
             this.organizeSongs();
@@ -75,8 +101,6 @@ export default class MixLookup extends LightningElement {
             console.error('Error loading order', error);
             this.dispatchToastError('Error loading order', error.message);
         }
-
-        this.isLoading = false;
     }
 
     organizeSongs() {
@@ -184,17 +208,32 @@ export default class MixLookup extends LightningElement {
     
 
     async sendPdf() {
+        let pdfBase64 = '';
         try {
             const pdfBytes = await this.createPdf();
-            const pdfBase64 = this.arrayBufferToBase64(pdfBytes);
-
-            await sendEmailWithPdf({ contactId: this.selectedContactId, pdfBase64: pdfBase64, fileName: this.mixName });
+            pdfBase64 = this.arrayBufferToBase64(pdfBytes);
         } catch (error) {
             console.error('Error creating PDF to send:', error.message);
             console.error('Stack trace:', error.stack);
             console.error('Error details:', error);
             this.dispatchToastError('Error while creating a pdf', error.message);
+            return;
+        } 
+        
+        try {
+            await sendEmailWithPdf({ contactId: this.selectedContactId, pdfBase64: pdfBase64, fileName: this.mixName });
+        } catch (error) {
+            console.error('Error details:', error);
+            this.dispatchToastError('Error sending email', error.body.message);
+            return;
         }
+
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: 'Success',
+                message: 'Mix sent to production',
+                variant: 'success'
+            }));
     }
 
     arrayBufferToBase64(buffer) {

@@ -42,7 +42,9 @@ export default class MusicTable extends LightningElement
             console.error(error);
         }
 
-        this.isLoading = false;
+        if(this.genres && this.totalPages && this.musicList) {
+            this.isLoading = false;
+        }
     }
 
     @wire(getGenres)
@@ -55,7 +57,9 @@ export default class MusicTable extends LightningElement
             console.error(error);
         }
         
-        this.isLoading = false;
+        if(this.genres && this.totalPages && this.musicList) {
+            this.isLoading = false;
+        }
     }
 
     @wire(getSongsByGenre, { genre: '$selectedGenre', offset: '$offset' })
@@ -73,7 +77,9 @@ export default class MusicTable extends LightningElement
             console.error(error);
         }
         
-        this.isLoading = false;
+        if(this.genres && this.totalPages && this.musicList) {
+            this.isLoading = false;
+        }
     }
 
     get offset() {

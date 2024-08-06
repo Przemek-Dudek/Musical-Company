@@ -19,4 +19,18 @@ public with sharing class SongService
 
         update songsToUpdate;
     }
+
+    public static List<String> getUnavailableSongNames(List<Song__c> songs)
+    {
+        List<String> songNames = new List<String>();
+        for (Song__c song : songs)
+        {
+            if(song.Track_Count__c == song.Track_Licenses__c)
+            {
+                songNames.add(song.Name);
+            }
+        }
+
+        return songNames;
+    }
 }

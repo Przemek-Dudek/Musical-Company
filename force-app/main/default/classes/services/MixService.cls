@@ -2,7 +2,7 @@ public with sharing class MixService
 {
     public static void updateMixFields(Set<Id> mixIds)
     {
-        Map<Id, Map<String, Integer>> mixGenreCount = getMixGenreCountMap(mixIds);
+        Map<Id, Map<Integer, List<String>>> mixGenreCount = getMixGenreCountMap(mixIds);
 
         List<Mix__c> mixesToUpdate = new List<Mix__c>();
 
@@ -10,35 +10,25 @@ public with sharing class MixService
         {
             Mix__c mix = new Mix__c(Id = mixId);
 
-            Map<String, Integer> genreCount = mixGenreCount.get(mixId);
+            Map<Integer, List<String>> genreCount = mixGenreCount.get(mixId);
 
-            if(genreCount == null)
+            List<String> topGenres = getTopGenres(genreCount);
+
+            mix.Primary_Genre__c = null;
+            mix.Secondary_Genre__c = null;
+
+            if(topGenres.isEmpty())
             {
-                mix.Primary_Genre__c = null;
-                mix.Secondary_Genre__c = null;
-
                 mixesToUpdate.add(mix);
                 continue;
             }
 
-            String primaryGenre = null;
-            String secondaryGenre = null;
+            mix.Primary_Genre__c = topGenres[0];
 
-            for(String genre : genreCount.keySet())
+            if(topGenres.size() > 1)
             {
-                if(primaryGenre == null || genreCount.get(genre) > genreCount.get(primaryGenre))
-                {
-                    secondaryGenre = primaryGenre;
-                    primaryGenre = genre;
-                }
-                else if(secondaryGenre == null || genreCount.get(genre) > genreCount.get(secondaryGenre))
-                {
-                    secondaryGenre = genre;
-                }
+                mix.Secondary_Genre__c = topGenres[1];
             }
-
-            mix.Primary_Genre__c = primaryGenre;
-            mix.Secondary_Genre__c = secondaryGenre;
 
             mixesToUpdate.add(mix);
         }
@@ -46,11 +36,45 @@ public with sharing class MixService
         update mixesToUpdate;
     }
 
-    public static Map<Id, Map<String, Integer>> getMixGenreCountMap(Set<Id> mixIds)
+    private static List<String> getTopGenres(Map<Integer, List<String>> genreCount)
+    {
+        List<String> topGenres = new List<String>();
+
+        List<Integer> counts = new List<Integer>(genreCount.keySet());
+        counts.sort();
+
+        if(counts.isEmpty())
+        {
+            return topGenres;
+        }
+
+        List<String> primaryGenres = genreCount.get(counts[counts.size() - 1]);
+
+        if(primaryGenres != null)
+        {
+            primaryGenres.sort();
+            topGenres.addAll(primaryGenres);
+        }
+
+        if(counts.size() > 1)
+        {
+            List<String> secondaryGenres = genreCount.get(counts[counts.size() - 2]);
+
+            if(secondaryGenres != null)
+            {
+                secondaryGenres.sort();
+                topGenres.addAll(secondaryGenres);
+            }
+        }
+        
+        return topGenres;
+    }
+
+    public static Map<Id, Map<Integer, List<String>>> getMixGenreCountMap(Set<Id> mixIds)
     {
         List<AggregateResult> queryRes = TrackSelector.getGenresByMixes(mixIds);
 
-        Map<Id, Map<String, Integer>> mixGenreCount = new Map<Id, Map<String, Integer>>();
+        Map<Id, Map<Integer, List<String>>> mixGenreCount = new Map<Id, Map<Integer, List<String>>>();
 
         for (AggregateResult r : queryRes)
         {
@@ -61,12 +85,17 @@ public with sharing class MixService
 
             if (!mixGenreCount.containsKey(mixId))
             {
-                mixGenreCount.put(mixId, new Map<String, Integer>());
+                mixGenreCount.put(mixId, new Map<Integer, List<String>>());
             }
 
-            Map<String, Integer> genreCount = mixGenreCount.get(mixId);
+            Map<Integer, List<String>> genreCount = mixGenreCount.get(mixId);
 
-            genreCount.put(genre, count);
+            if (!genreCount.containsKey(count))
+            {
+                genreCount.put(count, new List<String>());
+            }
+
+            genreCount.get(count).add(genre);
         }
 
         return mixGenreCount;
@@ -85,22 +114,26 @@ public with sharing class MixService
         return fullMixIds;
     }
 
-    public static void createNewMix(MixWrapper mix)
+    public static Id createNewMix(MixWrapper mix)
     {
         Savepoint sp = Database.setSavepoint();
-    
+        
+        Mix__c newMix;
+
         try
         {
-            Mix__c newMix = new Mix__c(Name = mix.mixName, Customer__c = mix.contactId);
+            newMix = new Mix__c(Name = mix.mixName, Customer__c = mix.contactId);
             insert newMix;
 
             TrackService.createTracks(newMix.Id, mix.selectedSongs);
         }
-        catch (Exception e)
+        catch (DmlException e)
         {
             Database.rollback(sp);
             throw e;
         }
+
+        return newMix.Id;
     }
 
     public static void updateMixData(MixWrapper mix)

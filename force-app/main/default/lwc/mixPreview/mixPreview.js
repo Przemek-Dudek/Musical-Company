@@ -21,8 +21,6 @@ export default class MixPreview extends LightningElement
     @track _selectedSongs = [];
     @track contactName;
 
-    @api isLoading;
-
     @api
     get selectedSongs() {
         return this._selectedSongs;

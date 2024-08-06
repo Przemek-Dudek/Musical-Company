@@ -1,6 +1,14 @@
 public with sharing class MixBuilderController
 {
-    @AuraEnabled(cacheable=true)
+    private static void songLicenseException(List<Song__c> songs)
+    {
+        Set<Id> songIds = Utils.getIdFieldValue(songs, Consts.FIELD_ID);
+        List<String> songNames = SongService.getUnavailableSongNames(SongSelector.selectById(songIds));
+
+        throw new AuraHandledException('Insufficient song licenses: ' + String.join(songNames, ', '));
+    }
+    
+    @AuraEnabled(cacheable=false)
     public static String getMix(String mixId)
     {
         Mix__c selectedMix = MixSelector.selectById(new Set<Id>{(Id)mixId})[0];
@@ -17,18 +25,30 @@ public with sharing class MixBuilderController
     }
 
     @AuraEnabled(cacheable=false)
-    public static void handleMixUpsert(String mixJson)
+    public static String handleMixUpsert(String mixJson)
     {
         MixWrapper mix = (MixWrapper)JSON.deserialize(mixJson, MixWrapper.class);
-        
+
+        Id mixId = mix.mixId;
+
         if (mix.mixId == null)
         {
-            MixService.createNewMix(mix);
+            try {
+                mixId = MixService.createNewMix(mix);
+            } catch (DmlException e) {
+                songLicenseException(mix.selectedSongs);
+            }
         }
         else
         {
-            MixService.updateExistingMix(mix);
+            try {
+                MixService.updateExistingMix(mix);
+            } catch (DmlException e) {
+                songLicenseException(mix.selectedSongs);
+            }
         }
+
+        return mixId;
     }
 
     @AuraEnabled(cacheable=false)
