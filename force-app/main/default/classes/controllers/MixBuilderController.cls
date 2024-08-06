@@ -36,7 +36,14 @@ public with sharing class MixBuilderController
             try {
                 mixId = MixService.createNewMix(mix);
             } catch (DmlException e) {
-                songLicenseException(mix.selectedSongs);
+                for (Integer i = 0; i < e.getNumDml(); i++) {
+                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses')) {
+                        songLicenseException(mix.selectedSongs);
+                        return null;
+                    }
+                }
+
+                throw e;
             }
         }
         else
@@ -44,7 +51,14 @@ public with sharing class MixBuilderController
             try {
                 MixService.updateExistingMix(mix);
             } catch (DmlException e) {
-                songLicenseException(mix.selectedSongs);
+                for (Integer i = 0; i < e.getNumDml(); i++) {
+                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses')) {
+                        songLicenseException(mix.selectedSongs);
+                        return null;
+                    }
+                }
+
+                throw e;
             }
         }
 
