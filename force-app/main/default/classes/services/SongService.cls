@@ -5,15 +5,11 @@ public with sharing class SongService
         List<Song__c> songsToUpdate = new List<Song__c>();
 
         List<AggregateResult> results = TrackSelector.countTracksOnSongs(songIds);
-        if(results.isEmpty())
+
+        Map<Id, Integer> songTrackCounts = new Map<Id, Integer>();
+        for(Id songId : songIds)
         {
-            for(Id songId : songIds)
-            {
-                songsToUpdate.add(new Song__c(Id = songId, Track_Count__c = 0));
-            }
-            
-            update songsToUpdate;
-            return;
+            songTrackCounts.put(songId, 0);
         }
 
         for (AggregateResult res : results)
@@ -21,7 +17,14 @@ public with sharing class SongService
             Id songId = (Id)res.get(Consts.FIELD_SONG);
             Integer trackCount = (Integer)res.get(Consts.AGGREGATE_COUNT);
 
-            songsToUpdate.add(new Song__c(Id = songId, Track_Count__c = trackCount));
+            songTrackCounts.put(songId, trackCount);
+        }
+
+        for(Id songId : songIds)
+        {
+            Song__c song = new Song__c(Id = songId);
+            song.Track_Count__c = songTrackCounts.get(songId);
+            songsToUpdate.add(song);
         }
 
         update songsToUpdate;
