@@ -135,21 +135,25 @@ export default class MusicTable extends LightningElement
     }
 
     handleFirstPage() {
+        this.isLoading = true;
         this.currentPage = 1;
         this.updateDisplayList();
     }
 
     handlePreviousPage() {
+        this.isLoading = true;
         this.currentPage = Math.max(1, this.currentPage - 1);
         this.updateDisplayList();
     }
 
     handleNextPage() {
+        this.isLoading = true;
         this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
         this.updateDisplayList();
     }
 
     handleLastPage() {
+        this.isLoading = true;
         this.currentPage = this.totalPages;
         this.updateDisplayList();
     }
