@@ -25,7 +25,8 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         SongSelector selector = new SongSelector();
 
         fflib_QueryFactory queryFactory = selector.newQueryFactory();
-        return (List<Song__c>) Database.query(queryFactory.setCondition('Id IN :ids').addOrdering(Consts.FIELD_NAME, fflib_QueryFactory.SortOrder.ASCENDING).toSOQL());
+        return (List<Song__c>) Database.query(queryFactory.setCondition('Id IN :ids')
+            .addOrdering(Consts.FIELD_NAME, fflib_QueryFactory.SortOrder.ASCENDING).toSOQL());
     }
 
     public static List<Song__c> selectByGenre(String genre, Integer offset)
@@ -49,7 +50,8 @@ public with sharing class SongSelector extends fflib_SObjectSelector
     {
         String query = 'SELECT COUNT(Id) n FROM Song__c';
 
-        if (genre != Consts.GENRE_ALL) {
+        if (genre != Consts.GENRE_ALL)
+        {
             query += ' WHERE Genre__c = :genre';
         }
 

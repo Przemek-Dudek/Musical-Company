@@ -16,9 +16,9 @@
             var payloadObj = JSON.parse(decodedPayload);
 
             if (payloadObj.attributes && payloadObj.attributes.objectApiName !== 'Contact') {
-                console.error('Invalid object:', payloadObj.attributes.objectApiName);
                 return null;
             }
+            
             return payloadObj.attributes ? payloadObj.attributes.recordId : null;
         } catch (e) {
             console.error('Error parsing payload:', e);

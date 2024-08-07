@@ -33,11 +33,16 @@ public with sharing class MixBuilderController
 
         if (mix.mixId == null)
         {
-            try {
+            try
+            {
                 mixId = MixService.createNewMix(mix);
-            } catch (DmlException e) {
-                for (Integer i = 0; i < e.getNumDml(); i++) {
-                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses')) {
+            } 
+            catch (DmlException e)
+            {
+                for (Integer i = 0; i < e.getNumDml(); i++)
+                {
+                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses'))
+                    {
                         songLicenseException(mix.selectedSongs);
                         return null;
                     }
@@ -48,11 +53,16 @@ public with sharing class MixBuilderController
         }
         else
         {
-            try {
+            try
+            {
                 MixService.updateExistingMix(mix);
-            } catch (DmlException e) {
-                for (Integer i = 0; i < e.getNumDml(); i++) {
-                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses')) {
+            }
+            catch (DmlException e)
+            {
+                for (Integer i = 0; i < e.getNumDml(); i++)
+                {
+                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses'))
+                    {
                         songLicenseException(mix.selectedSongs);
                         return null;
                     }
@@ -100,7 +110,8 @@ public with sharing class MixBuilderController
         List<String> genres = new List<String>();
         List<Schema.PicklistEntry> picklistEntries = Song__c.Genre__c.getDescribe().getPicklistValues();
         
-        for (Schema.PicklistEntry entry : picklistEntries) {
+        for (Schema.PicklistEntry entry : picklistEntries)
+        {
             genres.add(entry.getLabel());
         }
         

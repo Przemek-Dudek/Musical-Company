@@ -1,20 +1,20 @@
 import { getRecord } from 'lightning/uiRecordApi';
 import { LightningElement, api, track, wire } from 'lwc';
 
+const COLUMNS = [
+    { 
+        label: 'Name',
+        fieldName: 'url',
+        type: 'url',
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+    },
+    { label: 'Artist', fieldName: 'Artist__c' },
+    { label: 'Genre', fieldName: 'Genre__c' },
+    { label: 'Length', fieldName: 'formattedLength' }
+];
+
 export default class MixPreview extends LightningElement
 {
-    columns = [
-        { 
-            label: 'Name',
-            fieldName: 'url',
-            type: 'url',
-            typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
-        },
-        { label: 'Artist', fieldName: 'Artist__c' },
-        { label: 'Genre', fieldName: 'Genre__c' },
-        { label: 'Length', fieldName: 'formattedLength' }
-    ];
-
     @api selectedContactId;
     @api mixName;
     
@@ -24,6 +24,21 @@ export default class MixPreview extends LightningElement
     @api
     get selectedSongs() {
         return this._selectedSongs;
+    }
+
+    @wire(getRecord, { recordId: '$selectedContactId', fields: ['Contact.Name'] })
+    wiredContact({ error, data }) {
+        if (data) {
+            this.contactName = data.fields.Name.value;
+        }
+        else if (error) {
+            console.error(error);
+            this.dispatchToastError('Error loading contact preview', error.message);
+        }
+    }
+
+    get columns() {
+        return COLUMNS;
     }
 
     set selectedSongs(value) {
@@ -65,16 +80,5 @@ export default class MixPreview extends LightningElement
         const decimalMinutes = minutes - totalMinutes;
         const seconds = Math.round(decimalMinutes * 60);
         return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-    }
-
-    @wire(getRecord, { recordId: '$selectedContactId', fields: ['Contact.Name'] })
-    wiredContact({ error, data }) {
-        if (data) {
-            this.contactName = data.fields.Name.value;
-        }
-        else if (error) {
-            console.error(error);
-            this.dispatchToastError('Error loading contact preview', error.message);
-        }
     }
 }

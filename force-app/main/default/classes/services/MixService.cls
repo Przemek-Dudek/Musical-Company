@@ -11,7 +11,6 @@ public with sharing class MixService
             Mix__c mix = new Mix__c(Id = mixId);
 
             Map<Integer, List<String>> genreCount = mixGenreCount.get(mixId);
-
             List<String> topGenres = getTopGenres(genreCount);
 
             mix.Primary_Genre__c = null;

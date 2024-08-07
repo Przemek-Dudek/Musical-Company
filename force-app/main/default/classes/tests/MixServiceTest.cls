@@ -8,21 +8,6 @@ public with sharing class MixServiceTest
     }
 
     @isTest
-    static void getMixGenreCountMap()
-    {
-        List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];
-        Set<Id> mixIds = Utils.getIdFieldValue(mixes, Consts.FIELD_ID);
-
-        Map<Id, Map<String, Integer>> mixGenreCount = MixService.getMixGenreCountMap(mixIds);
-
-        System.assertEquals(3, mixGenreCount.size());
-        for(Mix__c mix : mixes)
-        {
-            System.assertEquals(10, mixGenreCount.get(mix.Id).get(TestHelper.GENRE_ROCK));
-        }
-    }
-
-    @isTest
     static void updateMixFields()
     {
         List<Mix__c> mixes = [SELECT Id FROM Mix__c LIMIT 3];

@@ -6,20 +6,21 @@ import getPages from '@salesforce/apex/MixBuilderController.getPages';
 
 const SONG_URL = '/lightning/r/Song__c/';
 const VIEW = '/view';
+const COLUMNS = [
+    { 
+        label: 'Name',
+        fieldName: 'url',
+        type: 'url',
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+    },
+    { label: 'Artist', fieldName: 'Artist__c' },
+    { label: 'Genre', fieldName: 'Genre__c' },
+    { label: 'Length', fieldName: 'formattedTime' }
+];
 
 export default class MusicTable extends LightningElement
 {
-    columns = [
-        { 
-            label: 'Name',
-            fieldName: 'url',
-            type: 'url',
-            typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
-        },
-        { label: 'Artist', fieldName: 'Artist__c' },
-        { label: 'Genre', fieldName: 'Genre__c' },
-        { label: 'Length', fieldName: 'formattedTime' }
-    ];
+    
 
     @track selectedGenre = 'all';
     @track genres;
@@ -92,6 +93,10 @@ export default class MusicTable extends LightningElement
             song => this.displayList.some(
                 displaySong => displaySong.Id === song.Id))
                 .map(song => song.Id);
+    }
+
+    get columns() {
+        return COLUMNS;
     }
 
     handleRowAction(event) {

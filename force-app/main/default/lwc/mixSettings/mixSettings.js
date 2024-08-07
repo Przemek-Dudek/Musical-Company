@@ -57,12 +57,14 @@ export default class MixSettings extends LightningElement {
 
     handleContactSelect(event) {
         this.selectedContactId = event.detail.recordId;
+
         const selectedEvent = new CustomEvent('contact', { detail: { recordId: this.selectedContactId } });
         this.dispatchEvent(selectedEvent);
     }
 
     handleMixNameChange(event) {
         this.mixName = event.target.value;
+        
         const selectedEvent = new CustomEvent('name', { detail: { value: this.mixName } });
         this.dispatchEvent(selectedEvent);
     }
