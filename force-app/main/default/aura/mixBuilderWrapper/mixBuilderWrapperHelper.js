@@ -9,12 +9,16 @@
         }
 
         var base64Url = parts[1];
-
         var base64 = this.base64urlToBase64(base64Url);
         var decodedPayload = atob(base64);
-        
+
         try {
             var payloadObj = JSON.parse(decodedPayload);
+
+            if (payloadObj.attributes && payloadObj.attributes.objectApiName !== 'Contact') {
+                console.error('Invalid object:', payloadObj.attributes.objectApiName);
+                return null;
+            }
             return payloadObj.attributes ? payloadObj.attributes.recordId : null;
         } catch (e) {
             console.error('Error parsing payload:', e);
