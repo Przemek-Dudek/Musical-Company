@@ -1,9 +1,12 @@
 <aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,lightning:actionOverride" access="global">
     <aura:attribute name="recordId" type="String"/>
-    <aura:attribute name="contactId" type="String" />
-    
+    <aura:attribute name="contactId" type="String"/>
+    <aura:attribute name="pageReference" type="Object"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
     <c:mixBuilder 
         recordId="{!v.recordId}"
-        object-api-name="{!v.objectApiName}"
+        contactId="{!v.contactId}"
     ></c:mixBuilder>
 </aura:component>

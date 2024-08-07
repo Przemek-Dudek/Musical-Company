@@ -40,6 +40,9 @@ export default class MixBuilder extends LightningElement
 
     //removed wire as it doesn't allow for cashable=false, which is a fix for the issue of the mix not updating after a song is added/removed
     connectedCallback() {
+        console.log('Record ID:', this.recordId);
+        console.log('Contact ID:', this.contactId);
+
         if (this.recordId) {
             getMix({ mixId: this.recordId })
             .then(result => {
