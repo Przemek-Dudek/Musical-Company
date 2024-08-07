@@ -38,8 +38,17 @@ public with sharing class MixService
     private static List<String> getTopGenres(Map<Integer, List<String>> genreCount)
     {
         List<String> topGenres = new List<String>();
+        if(genreCount == null)
+        {
+            return topGenres;
+        }
 
         List<Integer> counts = new List<Integer>(genreCount.keySet());
+        if(counts.isEmpty())
+        {
+            return topGenres;
+        }
+
         counts.sort();
 
         if(counts.isEmpty())
