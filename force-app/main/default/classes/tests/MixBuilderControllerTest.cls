@@ -209,4 +209,41 @@ private class MixBuilderControllerTest
 
         System.assertEquals(5, pages);
     }
+
+    @isTest
+    static void noTrackLicenses()
+    {
+        Song__c noLicenseSong = new Song__c(
+            Name = 'No License Song',
+            Artist__c = 'No License Artist',
+            Genre__c = TestHelper.GENRE_ROCK,
+            Length__c = 180,
+            Track_Count__c = 0,
+            Track_Licenses__c = 0
+        );
+        insert noLicenseSong;
+
+    
+        List<Mix__c> mixes = [SELECT Id, Name FROM Mix__c];
+        delete mixes;
+
+        List<Song__c> songs = [SELECT Id, Name FROM Song__c LIMIT 10];
+        songs.add(noLicenseSong);
+
+        MixWrapper wrapper = new MixWrapper(
+            null, 'Name', null,
+            songs
+        );
+
+        Test.startTest();
+        try
+        {
+            MixBuilderController.handleMixUpsert(JSON.serialize(wrapper));
+        }
+        catch(AuraHandledException e)
+        {
+            System.assertEquals('Script-thrown exception', e.getMessage());
+        }
+        Test.stopTest();
+    }
 }
