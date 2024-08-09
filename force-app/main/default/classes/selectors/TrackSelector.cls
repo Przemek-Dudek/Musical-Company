@@ -26,6 +26,11 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
         return (List<Track__c>) Database.query(queryFactory.setCondition('Mix__c = :mixIds').toSOQL());
     }
 
+    public static List<Track__c> selectKeyByMixId(Set<Id> mixIds)
+    {
+        return [SELECT Id, Mix__c FROM Track__c WHERE Mix__c IN :mixIds];
+    }
+
     public static List<Track__c> selectByIds(Set<Id> trackIds)
     {
         TrackSelector selector = new TrackSelector();

@@ -3,7 +3,7 @@ public with sharing class TrackService
     public static void processAddedTracks(List<Track__c> newTracks)
     {
         Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
-        List<Track__c> selectedTracks = TrackSelector.selectByMixId(affectedMixIds);
+        List<Track__c> selectedTracks = TrackSelector.selectKeyByMixId(affectedMixIds);
         Map<Id, List<Track__c>> tracksByMixId = Utils.getParentIdToChildrenMapping(selectedTracks, Consts.FIELD_MIX);
 
         for(Track__c track : newTracks)
@@ -14,7 +14,11 @@ public with sharing class TrackService
             }
 
             Set<Track__c> tracks = new Set<Track__c>(tracksByMixId.get(track.Mix__c));
-            tracks.add(track);
+           
+            tracks.add(new Track__c(
+                Id = track.Id,
+                Mix__c = track.Mix__c
+            ));
 
             if(tracks.size() > Consts.MAX_TRACKS_PER_MIX)
             {

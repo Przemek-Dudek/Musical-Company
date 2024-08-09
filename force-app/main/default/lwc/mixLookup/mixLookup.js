@@ -59,11 +59,12 @@ export default class MixLookup extends LightningElement {
                     const parsedResult = JSON.parse(result);
     
                     this.mixName = parsedResult.mixName;
-                    this.contactId = parsedResult.contactId;
+                    this.selectedContactId = parsedResult.contactId;
     
                     this.selectedSongs = parsedResult.selectedSongs.map(song => ({
                         ...song,
-                        url: SONG_URL + song.Id + VIEW
+                        url: SONG_URL + song.Id + VIEW,
+                        formattedLength: this.formatTime(song.Length__c)
                     }));
                 } catch (error) {
                     console.error('Error parsing result', error);

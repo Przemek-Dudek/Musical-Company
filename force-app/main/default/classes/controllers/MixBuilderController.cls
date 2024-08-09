@@ -160,6 +160,21 @@ public with sharing class MixBuilderController
     {
         List<Contact> contacts = ContactSelector.selectById(new Set<Id>{(Id)contactId});
         
-        EmailManager.sendEmailWithPdf(contacts, pdfBase64, fileName);
+        System.debug('contacts: ' + contacts);
+        try
+        {
+            EmailManager.sendEmailWithPdf(contacts, pdfBase64, fileName);
+        }
+        catch (Exception e)
+        {
+            if (e.getMessage().contains('REQUIRED_FIELD_MISSING'))
+            {
+                throw new AuraHandledException('Chosen contact doesn\'t have an email address');
+            }
+            else
+            {
+                throw new AuraHandledException('An unexpected error occurred while sending an email');
+            }
+        }
     }
 }
