@@ -137,6 +137,10 @@ export default class MixLookup extends LightningElement {
         return `${totalMinutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     }
 
+    get mixLocked() {
+        return this.selectedSongs.some(song => !song.Is_Active__c);
+    }
+    
     get customerName() {
         return CREATED_BY + this.contactName;
     }

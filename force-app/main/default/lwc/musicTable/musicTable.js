@@ -11,11 +11,32 @@ const COLUMNS = [
         label: 'Name',
         fieldName: 'url',
         type: 'url',
-        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' },
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
     },
-    { label: 'Artist', fieldName: 'Artist__c' },
-    { label: 'Genre', fieldName: 'Genre__c' },
-    { label: 'Length', fieldName: 'formattedTime' }
+    { 
+        label: 'Artist', 
+        fieldName: 'Artist__c',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
+    { 
+        label: 'Genre', 
+        fieldName: 'Genre__c',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
+    { 
+        label: 'Length', 
+        fieldName: 'formattedLength',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
 ];
 
 export default class MusicTable extends LightningElement
@@ -65,11 +86,16 @@ export default class MusicTable extends LightningElement
     wiredSongs({ error, data }) {
         this.isLoading = true;
         if (data) {
-            this.musicList = data.map(song => ({
-                ...song,
-                formattedTime: this.formatTime(song.Length__c),
-                url: SONG_URL + song.Id + VIEW
-            }));
+            this.musicList = data.map(song => {
+                const formatClass = song.Is_Active__c ? null : 'slds-theme_alert-texture slds-text-color_inverse-weak';
+                
+                return {
+                    ...song,
+                    formattedTime: this.formatTime(song.Length__c),
+                    format: formatClass,
+                    url: SONG_URL + song.Id + VIEW
+                };
+            });
 
             this.displayList = this.musicList.slice(0, 10);
         } else if (error) {

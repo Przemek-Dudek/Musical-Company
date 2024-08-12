@@ -73,8 +73,7 @@ export default class MixPreview extends LightningElement
                 formattedLength: this.formatTime(song.Length__c)
             };
         });
-    }
-    
+    } 
 
     get isSongsLimitExceeded() {
         return this._selectedSongs.length > 20;

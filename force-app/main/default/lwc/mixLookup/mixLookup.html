@@ -29,6 +29,7 @@
         <div slot="footer" class="slds-align_absolute-center">
             <div class="slds-p-horizontal_x-small">
                 <lightning-button
+                    disabled={mixLocked}
                     variant="brand"
                     label="Generate PDF"
                     onclick={downloadPdf}
@@ -36,6 +37,7 @@
             </div>
             <div class="slds-p-horizontal_x-small">
                 <lightning-button
+                    disabled={mixLocked}
                     variant="success"
                     label="Produce Vinyl"
                     onclick={openVinylModal}
