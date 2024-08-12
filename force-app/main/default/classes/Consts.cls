@@ -13,6 +13,7 @@ public with sharing class Consts
     public static final String FIELD_MIX = 'Mix__c';
     public static final String FIELD_INDEX = 'Index__c';
     public static final String FIELD_GENRE = 'Genre__c';
+    public static final String FIELD_TRACK = 'Track__c';
     public static final String AGGREGATE_COUNT = 'n';
 
     public static final String GENRE_ALL = 'all';

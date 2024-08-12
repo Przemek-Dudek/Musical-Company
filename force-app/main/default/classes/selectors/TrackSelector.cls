@@ -51,6 +51,7 @@ public with sharing class TrackSelector extends fflib_SObjectSelector
         String query = 'SELECT COUNT(Id) ' + Consts.AGGREGATE_COUNT + ', Song__r.Genre__c ' + Consts.FIELD_GENRE + ', Mix__c ' + Consts.FIELD_MIX
             + ' FROM Track__c'
             + ' WHERE Mix__c IN :mixIds'
+            + ' AND Song__r.Is_Active__c = true'
             + ' GROUP BY Song__r.Genre__c, Mix__c';
 
         return Database.query(query);

@@ -3,11 +3,21 @@ public with sharing class TrackService
     public static void processAddedTracks(List<Track__c> newTracks)
     {
         Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
+        Set<Id> affectedSongIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_SONG);
+
+        List<Song__c> selectedSongs = SongSelector.selectById(affectedSongIds);
         List<Track__c> selectedTracks = TrackSelector.selectKeyByMixId(affectedMixIds);
         Map<Id, List<Track__c>> tracksByMixId = Utils.getParentIdToChildrenMapping(selectedTracks, Consts.FIELD_MIX);
+        Map<Id, List<Song__c>> songsById = Utils.getParentIdToChildrenMapping(selectedSongs, Consts.FIELD_ID);
 
         for(Track__c track : newTracks)
         {
+            if (songsById.get(track.Song__c)[0].Is_Active__c == false)
+            {
+                track.addError('Cannot add a locked song');
+                continue;
+            }
+
             if (!tracksByMixId.containsKey(track.Mix__c))
             {
                 tracksByMixId.put(track.Mix__c, new List<Track__c>());

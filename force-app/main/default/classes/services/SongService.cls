@@ -43,4 +43,19 @@ public with sharing class SongService
 
         return songNames;
     }
+
+    public static void publishDeletedEvent(List<Song__c> songs)
+    {
+        List<Song_Deactivation__e> events = new List<Song_Deactivation__e>();
+
+        for (Song__c song : songs)
+        {
+            if (song.Track_Count__c > 0)
+            {
+                events.add(new Song_Deactivation__e(Song_Id__c = song.Id));
+            }
+        }
+
+        EventBus.publish(events);
+    }
 }

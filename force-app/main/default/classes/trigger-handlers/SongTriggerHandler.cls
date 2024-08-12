@@ -9,6 +9,7 @@ public with sharing class SongTriggerHandler extends TriggerHandlerBase
 
     protected override void onBeforeDelete()
     {
+        SongService.publishDeletedEvent((List<Song__c>)Trigger.old);
         addMixesToUpdate();
     }
 

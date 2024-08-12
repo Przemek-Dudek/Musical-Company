@@ -11,6 +11,7 @@ public with sharing class SongSelector extends fflib_SObjectSelector
         fieldsList.add(Song__c.Artist__c);
         fieldsList.add(Song__c.Track_Count__c);
         fieldsList.add(Song__c.Track_Licenses__c);
+        fieldsList.add(Song__c.Is_Active__c);
 
         return fieldsList;
     }
