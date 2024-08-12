@@ -20,8 +20,6 @@ const COLUMNS = [
 
 export default class MusicTable extends LightningElement
 {
-    
-
     @track selectedGenre = 'all';
     @track genres;
     @track currentPage = 1;

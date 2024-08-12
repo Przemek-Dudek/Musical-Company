@@ -6,12 +6,34 @@ const COLUMNS = [
         label: 'Name',
         fieldName: 'url',
         type: 'url',
-        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' }
+        typeAttributes: { label: { fieldName: 'Name' }, target: '_blank' },
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
     },
-    { label: 'Artist', fieldName: 'Artist__c' },
-    { label: 'Genre', fieldName: 'Genre__c' },
-    { label: 'Length', fieldName: 'formattedLength' }
+    { 
+        label: 'Artist', 
+        fieldName: 'Artist__c',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
+    { 
+        label: 'Genre', 
+        fieldName: 'Genre__c',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
+    { 
+        label: 'Length', 
+        fieldName: 'formattedLength',
+        cellAttributes: {
+            class: { fieldName: 'format' }
+        }
+    },
 ];
+
 
 export default class MixPreview extends LightningElement
 {
@@ -42,11 +64,17 @@ export default class MixPreview extends LightningElement
     }
 
     set selectedSongs(value) {
-        this._selectedSongs = value.map(song => ({
-            ...song,
-            formattedLength: this.formatTime(song.Length__c)
-        }));
+        this._selectedSongs = value.map(song => {
+            const formatClass = song.Is_Active__c ? null : 'slds-theme_alert-texture slds-text-color_inverse-weak';
+            
+            return {
+                ...song,
+                format: formatClass,
+                formattedLength: this.formatTime(song.Length__c)
+            };
+        });
     }
+    
 
     get isSongsLimitExceeded() {
         return this._selectedSongs.length > 20;
