@@ -44,17 +44,17 @@ public with sharing class TrackTriggerTest
             track.Song__c = null;
         }
 
+        Boolean caughtException = false;
+
         Test.startTest();
-        update tracks;
-        Test.stopTest();
-
-        List<Mix__c> mixes = [SELECT Id, Primary_Genre__c, Secondary_Genre__c FROM Mix__c];
-
-        for(Mix__c mix : mixes)
-        {
-            System.assertEquals(null, mix.Primary_Genre__c);
-            System.assertEquals(null, mix.Secondary_Genre__c);
+        try {
+            update tracks;
+        } catch (DmlException e) {
+            caughtException = true;
         }
+        Test.stopTest();
+        
+        System.assertEquals(true, caughtException);
     }
 
     @isTest

@@ -12,6 +12,12 @@ public with sharing class TrackService
 
         for(Track__c track : newTracks)
         {
+            if (songsById.get(track.Song__c) == null || songsById.get(track.Song__c).isEmpty())
+            {
+                track.addError(Consts.ERROR_INVALID_SONG);
+                continue;
+            }
+            
             if (songsById.get(track.Song__c)[0].Is_Active__c == false)
             {
                 track.addError(Consts.ERROR_LOCKED_SONG);

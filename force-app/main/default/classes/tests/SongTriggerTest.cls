@@ -27,7 +27,7 @@ public with sharing class SongTriggerTest
     }
 
     @isTest
-    static void testDeleteSongs()
+    static void testDeleteSongsWithTracks()
     {
         List<Song__c> songs = [SELECT Id FROM Song__c];
 
@@ -39,9 +39,24 @@ public with sharing class SongTriggerTest
 
         for(Mix__c mix : mixes)
         {
-            System.assertEquals(null, mix.Primary_Genre__c);
+            System.assertEquals(TestHelper.GENRE_ROCK, mix.Primary_Genre__c);
             System.assertEquals(null, mix.Secondary_Genre__c);
         }
+    }
+
+    @isTest
+    static void testDeleteSongsWithoutTracks()
+    {
+        List<Song__c> songs = [SELECT Id FROM Song__c];
+        List<Track__c> tracks = [SELECT Id FROM Track__c];
+        delete tracks;
+
+        Test.startTest();
+        delete songs;
+        Test.stopTest();
+
+        songs = [SELECT Id FROM Song__c];
+        System.assertEquals(0, songs.size());
     }
 
     @isTest

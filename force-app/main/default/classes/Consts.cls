@@ -25,4 +25,5 @@ public with sharing class Consts
     public static final String ERROR_LICENSES = 'Insufficient song licenses: ';
     public static final String ERROR_LOCKED_SONG = 'Cannot add a locked song';
     public static final String ERROR_MAX_TRACKS_PER_MIX = 'Cannot add more than ' + MAX_TRACKS_PER_MIX + ' tracks to a mix';
+    public static final String ERROR_INVALID_SONG = 'Invalid song';
 }
