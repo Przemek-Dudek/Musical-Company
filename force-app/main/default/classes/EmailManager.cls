@@ -24,7 +24,6 @@ public with sharing class EmailManager
 
     public static void sendEmailWithPdf(List<Contact> contacts, String pdfBase64, String fileName)
     {
-        System.debug('Sending email with PDF');
         List<String> recipients = new List<String>();
         for (Contact contact : contacts)
         {
@@ -38,8 +37,6 @@ public with sharing class EmailManager
         attachment.setFileName(fileName + '.pdf');
         attachment.setBody(EncodingUtil.base64Decode(pdfBase64));
         attachment.setContentType('application/pdf');
-
-        System.debug('Sending email to: ' + recipients);
 
         sendMessage(recipients, 'Your Vinyl Mix', 'Please find the attached PDF file for detailed mix report', attachment);
     }

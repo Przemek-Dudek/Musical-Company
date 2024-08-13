@@ -14,7 +14,7 @@ public with sharing class TrackService
         {
             if (songsById.get(track.Song__c)[0].Is_Active__c == false)
             {
-                track.addError('Cannot add a locked song');
+                track.addError(Consts.ERROR_LOCKED_SONG);
                 continue;
             }
 
@@ -32,7 +32,7 @@ public with sharing class TrackService
 
             if(tracks.size() > Consts.MAX_TRACKS_PER_MIX)
             {
-                track.addError('Cannot add more than ' + Consts.MAX_TRACKS_PER_MIX + ' tracks to a mix');
+                track.addError(Consts.ERROR_MAX_TRACKS_PER_MIX);
             }
 
             tracksByMixId.put(track.Mix__c, new List<Track__c>(tracks));

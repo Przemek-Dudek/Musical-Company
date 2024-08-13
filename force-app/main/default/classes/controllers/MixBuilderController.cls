@@ -5,7 +5,7 @@ public with sharing class MixBuilderController
         Set<Id> songIds = Utils.getIdFieldValue(songs, Consts.FIELD_ID);
         List<String> songNames = SongService.getUnavailableSongNames(SongSelector.selectById(songIds));
 
-        throw new AuraHandledException('Insufficient song licenses: ' + String.join(songNames, ', '));
+        throw new AuraHandledException(Consts.ERROR_LICENSES + String.join(songNames, ', '));
     }
     
     @AuraEnabled(cacheable=false)
@@ -41,7 +41,7 @@ public with sharing class MixBuilderController
             {
                 for (Integer i = 0; i < e.getNumDml(); i++)
                 {
-                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses'))
+                    if (e.getDmlMessage(i).contains(Consts.ERROR_TRACK_COUNT))
                     {
                         songLicenseException(mix.selectedSongs);
                         return null;
@@ -61,7 +61,7 @@ public with sharing class MixBuilderController
             {
                 for (Integer i = 0; i < e.getNumDml(); i++)
                 {
-                    if (e.getDmlMessage(i).contains('Track Count cannot exceed the number of Track Licenses'))
+                    if (e.getDmlMessage(i).contains(Consts.ERROR_TRACK_COUNT))
                     {
                         songLicenseException(mix.selectedSongs);
                         return null;
@@ -160,20 +160,19 @@ public with sharing class MixBuilderController
     {
         List<Contact> contacts = ContactSelector.selectById(new Set<Id>{(Id)contactId});
         
-        System.debug('contacts: ' + contacts);
         try
         {
             EmailManager.sendEmailWithPdf(contacts, pdfBase64, fileName);
         }
         catch (Exception e)
         {
-            if (e.getMessage().contains('REQUIRED_FIELD_MISSING'))
+            if (e.getMessage().contains(Consts.ERROR_REQIRED_FIELD))
             {
-                throw new AuraHandledException('Chosen contact doesn\'t have an email address');
+                throw new AuraHandledException(Consts.ERROR_NO_EMAIL);
             }
             else
             {
-                throw new AuraHandledException('An unexpected error occurred while sending an email');
+                throw new AuraHandledException(Consts.ERROR_UNEXPECTED);
             }
         }
     }
