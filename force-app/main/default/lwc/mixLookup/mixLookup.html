@@ -26,6 +26,11 @@
             mix-name={mixName}
             selected-songs={selectedSongs}
         ></c-mix-preview>
+        <div lwc:if={mixLocked} class="slds-grid slds-var-p-horizontal_x-large">
+            <div class="slds-col slds-size_1-of-1 slds-text-align_center slds-var-p-top_small">
+                <lightning-badge class="slds-theme_error" label="Please remove locked songs from mix"></lightning-badge>
+            </div>
+        </div>
         <div slot="footer" class="slds-align_absolute-center">
             <div class="slds-p-horizontal_x-small">
                 <lightning-button

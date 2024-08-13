@@ -176,7 +176,11 @@ export default class MixBuilder extends LightningElement
         this.dispatchEvent(toast);
     }
 
+    get lockedSongs() {
+        return this.selectedSongs.some(song => !song.Is_Active__c);
+    }
+
     get mixLocked() {
-        return this.selectedSongs.some(song => !song.Is_Active__c) || this.isLoading;
+        return this.lockedSongs || this.isLoading;
     }
 }

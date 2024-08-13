@@ -127,7 +127,7 @@ public with sharing class MixBuilderController
     @AuraEnabled(cacheable=true)
     public static Integer getPages(String genre)
     {
-        Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get('n');
+        Integer numberOfRecords = (Integer)SongSelector.numberOfRecords(genre).get(Consts.AGGREGATE_COUNT);
 
         if (Math.mod(numberOfRecords, Consts.PAGINATION_BATCH_SIZE) == 0 && numberOfRecords > 0)
         {
