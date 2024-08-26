@@ -1,0 +1,29 @@
+public with sharing class Consts
+{
+    public static final Integer MAX_TRACKS_PER_MIX = 20;
+    public static final Integer PAGINATION_BATCH_SIZE = 10;
+    public static final String EMAIL_SENDER_NAME = 'Musical Company';
+
+    public static final String EDIT_ACCESS_LEVEL = 'Edit';
+    public static final String VIEW_ACCESS_LEVEL = 'Read';
+
+    public static final String FIELD_ID = 'Id';
+    public static final String FIELD_NAME = 'Name';
+    public static final String FIELD_SONG = 'Song__c';
+    public static final String FIELD_MIX = 'Mix__c';
+    public static final String FIELD_INDEX = 'Index__c';
+    public static final String FIELD_GENRE = 'Genre__c';
+    public static final String FIELD_TRACK = 'Track__c';
+    public static final String AGGREGATE_COUNT = 'n';
+
+    public static final String GENRE_ALL = 'all';
+
+    public static final String ERROR_TRACK_COUNT = 'Track Count cannot exceed the number of Track Licenses';
+    public static final String ERROR_REQIRED_FIELD = 'REQUIRED_FIELD_MISSING';
+    public static final String ERROR_NO_EMAIL = 'Chosen contact doesn\'t have an email address';
+    public static final String ERROR_UNEXPECTED = 'An unexpected error occurred';
+    public static final String ERROR_LICENSES = 'Insufficient song licenses: ';
+    public static final String ERROR_LOCKED_SONG = 'Cannot add a locked song';
+    public static final String ERROR_MAX_TRACKS_PER_MIX = 'Cannot add more than ' + MAX_TRACKS_PER_MIX + ' tracks to a mix';
+    public static final String ERROR_INVALID_SONG = 'Invalid song';
+}

@@ -1,0 +1,16 @@
+.custom-border-padding {
+    padding-top: 0.25rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.pagination-button {
+    font-size: 3em;
+    font-weight: bold;
+}
+
+.pagination-info {
+    font-size: 1.2em;
+    align-self: center;
+}

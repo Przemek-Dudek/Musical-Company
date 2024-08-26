@@ -1,0 +1,73 @@
+<template>
+    <div class="slds-p-horizontal_x-large">
+        <div class="">
+            <div>
+                <lightning-combobox
+                    name="genreFilter"
+                    value={selectedGenre}
+                    placeholder="Select Genre"
+                    options={genres}
+                    onchange={handleGenreChange}
+                ></lightning-combobox>
+            </div>
+            <div class="slds-is-relative slds-var-p-around_x-large" lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+            <div class="slds-p-top_medium">
+                <lightning-datatable
+                    if:false={isLoading} 
+                    key-field="Id"
+                    data={displayList}
+                    columns={columns}
+                    onrowselection={handleRowAction}
+                    selected-rows={selectedRowsGet}
+                ></lightning-datatable>
+            </div>
+            <div class="slds-grid slds-align_absolute-center slds-p-top_medium">
+                <div class="slds-p-horizontal_xxx-small">
+                    <lightning-button-icon
+                        icon-name="utility:left" 
+                        alternative-text="First Page"
+                        title="First Page"
+                        onclick={handleFirstPage}
+                        class="pagination-icon"
+                        disabled={isFirstPage}
+                    ></lightning-button-icon>
+                </div>
+                <div class="slds-p-horizontal_xxx-small">
+                    <lightning-button-icon
+                        icon-name="utility:chevronleft" 
+                        alternative-text="Previous Page"
+                        title="Previous Page"
+                        onclick={handlePreviousPage}
+                        class="pagination-icon"
+                        disabled={isFirstPage}
+                    ></lightning-button-icon>
+                </div>
+                <div class="pagination-info slds-p-horizontal_xxx-small">
+                    {currentPage} of {totalPages}
+                </div>
+                <div class="slds-p-horizontal_xxx-small">
+                    <lightning-button-icon
+                        icon-name="utility:chevronright"
+                        alternative-text="Next Page"
+                        title="Next Page"
+                        onclick={handleNextPage}
+                        class="pagination-icon"
+                        disabled={isLastPage}
+                    ></lightning-button-icon>
+                </div>
+                <div class="slds-p-horizontal_xxx-small">
+                    <lightning-button-icon
+                        icon-name="utility:right" 
+                        alternative-text="Last Page"
+                        title="Last Page"
+                        onclick={handleLastPage}
+                        class="pagination-icon"
+                        disabled={isLastPage}
+                    ></lightning-button-icon>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

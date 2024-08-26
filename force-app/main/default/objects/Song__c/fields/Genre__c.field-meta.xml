@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Genre__c</fullName>
+    <externalId>false</externalId>
+    <label>Genre</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pop</fullName>
+                <default>false</default>
+                <label>Pop</label>
+            </value>
+            <value>
+                <fullName>Hip Hop</fullName>
+                <default>false</default>
+                <label>Hip Hop</label>
+            </value>
+            <value>
+                <fullName>Rock</fullName>
+                <default>false</default>
+                <label>Rock</label>
+            </value>
+            <value>
+                <fullName>Rhythm and Blues</fullName>
+                <default>false</default>
+                <label>Rhythm and Blues</label>
+            </value>
+            <value>
+                <fullName>Soul</fullName>
+                <default>false</default>
+                <label>Soul</label>
+            </value>
+            <value>
+                <fullName>Reggae</fullName>
+                <default>false</default>
+                <label>Reggae</label>
+            </value>
+            <value>
+                <fullName>Country</fullName>
+                <default>false</default>
+                <label>Country</label>
+            </value>
+            <value>
+                <fullName>Folk</fullName>
+                <default>false</default>
+                <label>Folk</label>
+            </value>
+            <value>
+                <fullName>Funk</fullName>
+                <default>false</default>
+                <label>Funk</label>
+            </value>
+            <value>
+                <fullName>Middle Eastern</fullName>
+                <default>false</default>
+                <label>Middle Eastern</label>
+            </value>
+            <value>
+                <fullName>Jazz</fullName>
+                <default>false</default>
+                <label>Jazz</label>
+            </value>
+            <value>
+                <fullName>Disco</fullName>
+                <default>false</default>
+                <label>Disco</label>
+            </value>
+            <value>
+                <fullName>Classical</fullName>
+                <default>false</default>
+                <label>Classical</label>
+            </value>
+            <value>
+                <fullName>Electronic</fullName>
+                <default>false</default>
+                <label>Electronic</label>
+            </value>
+            <value>
+                <fullName>Music of Latin America</fullName>
+                <default>false</default>
+                <label>Music of Latin America</label>
+            </value>
+            <value>
+                <fullName>Music of Africa</fullName>
+                <default>false</default>
+                <label>Music of Africa</label>
+            </value>
+            <value>
+                <fullName>Music of Asia</fullName>
+                <default>false</default>
+                <label>Music of Asia</label>
+            </value>
+            <value>
+                <fullName>Traditional Music</fullName>
+                <default>false</default>
+                <label>Traditional Music</label>
+            </value>
+            <value>
+                <fullName>Independent Music</fullName>
+                <default>false</default>
+                <label>Independent Music</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

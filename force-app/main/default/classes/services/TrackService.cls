@@ -1,0 +1,72 @@
+public with sharing class TrackService
+{
+    public static void processAddedTracks(List<Track__c> newTracks)
+    {
+        Set<Id> affectedMixIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_MIX);
+        Set<Id> affectedSongIds = Utils.getIdFieldValue(newTracks, Consts.FIELD_SONG);
+
+        List<Song__c> selectedSongs = SongSelector.selectById(affectedSongIds);
+        List<Track__c> selectedTracks = TrackSelector.selectKeyByMixId(affectedMixIds);
+        Map<Id, List<Track__c>> tracksByMixId = Utils.getParentIdToChildrenMapping(selectedTracks, Consts.FIELD_MIX);
+        Map<Id, List<Song__c>> songsById = Utils.getParentIdToChildrenMapping(selectedSongs, Consts.FIELD_ID);
+
+        for(Track__c track : newTracks)
+        {
+            if (songsById.get(track.Song__c) == null || songsById.get(track.Song__c).isEmpty())
+            {
+                track.addError(Consts.ERROR_INVALID_SONG);
+                continue;
+            }
+            
+            if (songsById.get(track.Song__c)[0].Is_Active__c == false)
+            {
+                track.addError(Consts.ERROR_LOCKED_SONG);
+                continue;
+            }
+
+            if (!tracksByMixId.containsKey(track.Mix__c))
+            {
+                tracksByMixId.put(track.Mix__c, new List<Track__c>());
+            }
+
+            Set<Track__c> tracks = new Set<Track__c>(tracksByMixId.get(track.Mix__c));
+           
+            tracks.add(new Track__c(
+                Id = track.Id,
+                Mix__c = track.Mix__c
+            ));
+
+            if(tracks.size() > Consts.MAX_TRACKS_PER_MIX)
+            {
+                track.addError(Consts.ERROR_MAX_TRACKS_PER_MIX);
+            }
+
+            tracksByMixId.put(track.Mix__c, new List<Track__c>(tracks));
+        }
+    }
+
+    public static Set<Id> getMixIdsFromTracks(Set<Id> trackIds)
+    {
+        List<Track__c> tracks = TrackSelector.selectByIds(trackIds);
+
+        return Utils.getIdFieldValue(tracks, Consts.FIELD_MIX);
+    }
+
+    public static Set<Id> getTrackIdsFromSongs(Set<Id> songIds)
+    {
+        List<Track__c> tracks = TrackSelector.getTracksBySongIds(songIds);
+
+        return Utils.getIdFieldValue(tracks, Consts.FIELD_ID);
+    }
+
+    public static void createTracks(Id mixId, List<Song__c> songs)
+    {
+        List<Track__c> newTracks = new List<Track__c>();
+        for (Song__c song : songs)
+        {
+            newTracks.add(new Track__c(Mix__c = mixId, Song__c = song.Id));
+        }
+
+        insert newTracks;
+    }
+}

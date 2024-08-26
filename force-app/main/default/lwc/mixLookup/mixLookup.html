@@ -1,0 +1,53 @@
+<template>
+    <div lwc:if={vinylModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <c-vinyl-produce
+                contact-name={contactName}
+                selected-contact-id={selectedContactId}
+                mix-name={mixName}
+                selected-songs={selectedSongs}
+                mix-length={mixLength}
+                mix-id={recordId}
+                track-count={trackCount}
+                onclose={closeVinylModal}
+                onreorder={handleReorder}
+                onproduce={sendPdf}
+            ></c-vinyl-produce>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <lightning-card>
+        <div lwc:if={isLoading}>
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+        <c-mix-preview
+            if:false={isLoading}
+            selected-contact-id={selectedContactId}
+            mix-name={mixName}
+            selected-songs={selectedSongs}
+        ></c-mix-preview>
+        <div lwc:if={mixLocked} class="slds-grid slds-var-p-horizontal_x-large">
+            <div class="slds-col slds-size_1-of-1 slds-text-align_center slds-var-p-top_small">
+                <lightning-badge class="slds-theme_error" label="Please remove locked songs from mix"></lightning-badge>
+            </div>
+        </div>
+        <div slot="footer" class="slds-align_absolute-center">
+            <div class="slds-p-horizontal_x-small">
+                <lightning-button
+                    disabled={mixLocked}
+                    variant="brand"
+                    label="Generate PDF"
+                    onclick={downloadPdf}
+                ></lightning-button>
+            </div>
+            <div class="slds-p-horizontal_x-small">
+                <lightning-button
+                    disabled={mixLocked}
+                    variant="success"
+                    label="Produce Vinyl"
+                    onclick={openVinylModal}
+                ></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>
